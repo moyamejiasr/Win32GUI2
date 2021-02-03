@@ -18,9 +18,392 @@ Window::Window(Control* parent, TSTRING text, DWORD style, RECT rect)
         style + WS_CHILD, rect)
 {}
 
+POINT Window::minSize()
+{
+	return mMinSize;
+}
+
+POINT Window::maxSize()
+{
+	return mMaxSize;
+}
+
+void Window::minSize(POINT size)
+{
+	mMinSize = size;
+}
+
+void Window::minSize(LONG width, LONG height)
+{
+	minSize({ width, height });
+}
+
+void Window::maxSize(POINT size)
+{
+	mMaxSize = size;
+}
+
+void Window::maxSize(LONG width, LONG height)
+{
+	maxSize({ width, height });
+}
+
+bool Window::titleBar()
+{
+	return style.has(WS_CAPTION);
+}
+
+bool Window::resizable()
+{
+	return style.has(WS_THICKFRAME);
+}
+
+bool Window::clientEdge()
+{
+	return exstyle.has(WS_EX_CLIENTEDGE);
+}
+
+bool Window::clipChildren()
+{
+	return style.has(WS_CLIPCHILDREN);
+}
+
+bool Window::clipSiblings()
+{
+	return style.has(WS_CLIPSIBLINGS);
+}
+
+bool Window::composited()
+{
+	return exstyle.has(WS_EX_COMPOSITED);
+}
+
+bool Window::hScrollbar()
+{
+	return style.has(WS_HSCROLL);
+}
+
+bool Window::vScrollbar()
+{
+	return style.has(WS_VSCROLL);
+}
+
+bool Window::layered()
+{
+	return exstyle.has(WS_EX_LAYERED);
+}
+
+bool Window::layoutRTL()
+{
+	return exstyle.has(WS_EX_LAYOUTRTL);
+}
+
+bool Window::readingRTL()
+{
+	return style.has(WS_EX_RTLREADING);
+}
+
+bool Window::leftScrollbar()
+{
+	return exstyle.has(WS_EX_LEFTSCROLLBAR);
+}
+
+bool Window::maximizeBox()
+{
+	return style.has(WS_MAXIMIZEBOX);
+}
+
+bool Window::minimizeBox()
+{
+	return style.has(WS_MINIMIZEBOX);
+}
+
+bool Window::focusable()
+{
+	return exstyle.has(WS_EX_NOACTIVATE);
+}
+
+bool Window::staticEdge()
+{
+	return exstyle.has(WS_EX_STATICEDGE);
+}
+
+bool Window::sysMenu()
+{
+	return style.has(WS_SYSMENU);
+}
+
+bool Window::topMost()
+{
+	return exstyle.has(WS_EX_TOPMOST);
+}
+
+bool Window::transparent()
+{
+	return exstyle.has(WS_EX_TRANSPARENT);
+}
+
+void Window::titleBar(bool state)
+{
+	if (state) style.add(WS_CAPTION);
+	else style.subs(WS_CAPTION);
+}
+
+void Window::resizable(bool state)
+{
+	if (state) style.add(WS_THICKFRAME);
+	else style.subs(WS_THICKFRAME);
+}
+
+void Window::clientEdge(bool state)
+{
+	if (state) exstyle.add(WS_EX_CLIENTEDGE);
+	else exstyle.subs(WS_EX_CLIENTEDGE);
+}
+
+void Window::clipChildren(bool state)
+{
+	if (state) style.add(WS_CLIPCHILDREN);
+	else style.subs(WS_CLIPCHILDREN);
+}
+
+void Window::clipSiblings(bool state)
+{
+	if (state) style.add(WS_CLIPSIBLINGS);
+	else style.subs(WS_CLIPSIBLINGS);
+}
+
+void Window::composited(bool state)
+{
+	if (state) exstyle.add(WS_EX_COMPOSITED);
+	else style.subs(WS_EX_COMPOSITED);
+}
+
+void Window::hScrollbar(bool state)
+{
+	if (state) style.add(WS_HSCROLL);
+	else style.subs(WS_HSCROLL);
+}
+
+void Window::vScrollbar(bool state)
+{
+	if (state) style.add(WS_VSCROLL);
+	else style.subs(WS_VSCROLL);
+}
+
+void Window::layered(bool state)
+{
+	if (state) exstyle.add(WS_EX_LAYERED);
+	else exstyle.subs(WS_EX_LAYERED);
+}
+
+void Window::layoutRTL(bool state)
+{
+	if (state) exstyle.add(WS_EX_LAYOUTRTL);
+	else exstyle.subs(WS_EX_LAYOUTRTL);
+}
+
+void Window::readingRTL(bool state)
+{
+	if (state) style.add(WS_EX_RTLREADING);
+	else style.subs(WS_EX_RTLREADING);
+}
+
+void Window::leftScrollbar(bool state)
+{
+	if (state) exstyle.add(WS_EX_LEFTSCROLLBAR);
+	else exstyle.subs(WS_EX_LEFTSCROLLBAR);
+}
+
+void Window::maximizeBox(bool state)
+{
+	if (state) style.add(WS_MAXIMIZEBOX);
+	else style.subs(WS_MAXIMIZEBOX);
+}
+
+void Window::minimizeBox(bool state)
+{
+	if (state) style.add(WS_MINIMIZEBOX);
+	else style.subs(WS_MINIMIZEBOX);
+}
+
+void Window::focusable(bool state)
+{
+	if (state) exstyle.add(WS_EX_NOACTIVATE);
+	else exstyle.subs(WS_EX_NOACTIVATE);
+}
+
+void Window::staticEdge(bool state)
+{
+	if (state) exstyle.add(WS_EX_STATICEDGE);
+	else exstyle.subs(WS_EX_STATICEDGE);
+}
+
+void Window::sysMenu(bool state)
+{
+	if (state) style.add(WS_SYSMENU);
+	else style.subs(WS_SYSMENU);
+}
+
+void Window::topMost(bool state)
+{
+	HWND flag = HWND_NOTOPMOST;
+	if (state)
+		flag = HWND_TOPMOST;
+	SetWindowPos(mHwnd, flag, 0, 0, 0, 
+		0, SWP_NOMOVE | SWP_NOSIZE);
+}
+
+void Window::transparent(bool state)
+{
+	if (state) exstyle.add(WS_EX_TRANSPARENT);
+	else exstyle.subs(WS_EX_TRANSPARENT);
+}
+
+bool Window::appWindow()
+{
+	return exstyle.has(WS_EX_APPWINDOW);
+}
+
+bool Window::draggable()
+{
+	return mDraggable;
+}
+
+void Window::appWindow(bool state)
+{
+	if (state) exstyle.add(WS_EX_APPWINDOW);
+	else exstyle.subs(WS_EX_APPWINDOW);
+}
+
+void Window::draggable(bool state)
+{
+	mDraggable = state;
+}
+
+bool Window::contextHelp()
+{
+	return exstyle.has(WS_EX_CONTEXTHELP);
+}
+
+bool Window::controlParent()
+{
+	return exstyle.has(WS_EX_CONTROLPARENT);
+}
+
+bool Window::maximized()
+{
+	WINDOWPLACEMENT plmnt = { 0 };
+	plmnt.length = sizeof(plmnt);
+	GetWindowPlacement(mHwnd, &plmnt);
+	return plmnt.showCmd & SW_MAXIMIZE;
+}
+
+bool Window::minimized()
+{
+	WINDOWPLACEMENT plmnt = { 0 };
+	plmnt.length = sizeof(plmnt);
+	GetWindowPlacement(mHwnd, &plmnt);
+	return plmnt.showCmd & SW_MINIMIZE;
+}
+
+void Window::contextHelp(bool state)
+{
+	if (state) exstyle.add(WS_EX_CONTEXTHELP);
+	else exstyle.subs(WS_EX_CONTEXTHELP);
+}
+
+void Window::controlParent(bool state)
+{
+	if (state) exstyle.add(WS_EX_CONTROLPARENT);
+	else exstyle.subs(WS_EX_CONTROLPARENT);
+}
+
+void Window::maximize()
+{
+	ShowWindow(mHwnd, SW_MAXIMIZE);
+}
+
+void Window::minimize()
+{
+	ShowWindow(mHwnd, SW_MINIMIZE);
+}
+
+void Window::restore()
+{
+	ShowWindow(mHwnd, SW_RESTORE);
+}
+
+void Window::redrawMenu()
+{
+	DrawMenuBar(mHwnd);
+}
+
+int Window::newMessageBox(TSTRING text, UINT flags)
+{
+	return MessageBox(mHwnd, text.c_str(), this->text().c_str(), flags);
+}
+
+
+void Window::setOnClose(OnCloseFunc func)
+{
+	mOnClose = func;
+}
+
+void Window::setOnFocus(OnFocusFunc func)
+{
+	mOnFocus = func;
+}
+
+void Window::setOnResize(OnResizeFunc func)
+{
+	mOnResize = func;
+}
+
+void Window::setOnMove(OnMoveFunc func)
+{
+	mOnMove = func;
+}
+
+LRESULT Window::onDraw(HDC hdc)
+{
+	if (mOnDraw)
+		return mOnDraw(this, hdc);
+	RECT rect;
+	GetClientRect(mHwnd, &rect);
+	SetDCBrushColor(hdc, mBColor);
+	FillRect(hdc, &rect, (HBRUSH)GetStockObject(DC_BRUSH));
+	return true;
+}
+
+bool Window::onClose()
+{
+	// Close if callback not exists
+	// also if it returned true.
+	return !mOnClose || mOnClose(this);
+}
+
+void Window::onFocus(bool state)
+{
+	if (mOnFocus)
+		mOnFocus(this, state);
+}
+
+void Window::onResize(POINT point)
+{
+	if (mOnResize)
+		mOnResize(this, point);
+}
+
+void Window::onMove(POINT point)
+{
+	if (mOnMove)
+		mOnMove(this, point);
+}
+
 LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    Window* it = (Window*)AsControl(hwnd);
+	Window* it = (Window*)AsControl(hwnd);
 	if (!it) // Not a valid control (UserData not set??)
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
@@ -68,8 +451,8 @@ LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_COMMAND:
 	{
-		Control* control = AsControl((HWND)lParam);
-		if (control) return control->procedure(uMsg, wParam, lParam);
+		Control* child = AsControl((HWND)lParam);
+		if (child) return child->procedure(uMsg, wParam, lParam);
 		// Is it a context-menu item?? TODO: Implement
 		//else if (HIWORD(wParam) == 0)
 		break;
@@ -115,5 +498,5 @@ LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (it->onClose()) it->~Window();
 		return 0;
 	}
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

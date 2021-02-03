@@ -154,6 +154,7 @@ public:
 	// Behavior: Getters & Setters
 	////////////////////////////////////////////////////////////
 
+	bool acceptFiles();
 	/*	Returns true if the control is enabled or false if not.
 		@return bool
 	*/
@@ -163,6 +164,7 @@ public:
 	*/
 	bool visible();
 
+	void acceptFiles(bool);
 	/*	Sets the enabled state with a boolean value.
 		@param bool state
 	*/
