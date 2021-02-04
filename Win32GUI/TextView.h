@@ -4,13 +4,6 @@
 
 #include "Control.h"
 
-enum Ellipsis {
-	None = 0x0,
-	End = SS_ENDELLIPSIS,
-	Path = SS_PATHELLIPSIS,
-	Word = SS_WORDELLIPSIS
-};
-
 class TextView: public Control
 {
 public:
@@ -33,15 +26,13 @@ public:
 	// Appearance: Getters & Setters
 	////////////////////////////////////////////////////////////
 
-	TextAlign align();
-	Ellipsis textEllipsis();
+	Align textAlign();
+	bool textEllipsis();
 	bool simple();
-	bool sunken();
 
-	void align(TextAlign);
-	void textEllipsis(Ellipsis);
+	void textAlign(Align);
+	void textEllipsis(bool);
 	void simple(bool);
-	void sunken(bool);
 
 	////////////////////////////////////////////////////////////
 	// Behavior: Getters & Setters
@@ -49,5 +40,7 @@ public:
 
 	/*	No behavior properties */
 
+protected:
+	LRESULT onDraw(HDC hdc);
 };
 

@@ -26,6 +26,7 @@ typedef std::string TSTRING;
 #define LPARAM2POINT(pm) { GET_X_LPARAM(pm), GET_Y_LPARAM(pm) }
 #define AsControl(hwnd) (Control*)GetWindowLongPtr(hwnd, GWLP_USERDATA)
 #define SetControl(hwnd, ptr) SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)ptr)
+#define UpdateStyle(hwnd) SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
 
 // Common callback definitions
 class Control;
@@ -37,7 +38,7 @@ typedef std::function<void(Control*, DWORD, POINT)> OnClickFunc;
 typedef std::function<void(Control*, DWORD, POINT)> OnDoubleClickFunc;
 typedef std::function<void(Control*, DWORD, POINT)> OnMouseWheelFunc;
 
-enum TextAlign
+enum Align
 {
 	Left = SS_LEFT,
 	Center = SS_CENTER,

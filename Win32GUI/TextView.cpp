@@ -25,23 +25,18 @@ void TextView::autoSize()
 	size(s);
 }
 
-TextAlign TextView::align()
+Align TextView::textAlign()
 {
 	// Check that either 01b or 11b is set 
 	// since styles are 0, 1 and 2.
-	return (TextAlign)(style.get() & 3);
+	return (Align)(style.get() & 3);
 }
 
-Ellipsis TextView::textEllipsis()
+bool TextView::textEllipsis()
 {
-	// Cause ellipsis is either 0x4000, 0x8000 or
+	// Check for either 0x4000, 0x8000 or
 	// 0xC000 which is a combination of both.
-	switch (style.get() & 0xC000) {
-	case Ellipsis::End: return End;
-	case Ellipsis::Path: return Path;
-	case Ellipsis::Word: return Word;
-	}
-	return Ellipsis::None;
+	return style.get() & SS_WORDELLIPSIS;
 }
 
 bool TextView::simple()
@@ -49,25 +44,19 @@ bool TextView::simple()
 	return style.has(SS_SIMPLE);
 }
 
-bool TextView::sunken()
+void TextView::textAlign(Align type)
 {
-	return style.has(SS_SUNKEN);
-}
-
-void TextView::align(TextAlign type)
-{
-	style.subs(TextAlign::Center);
-	style.subs(TextAlign::Right);
+	style.subs(Align::Center);
+	style.subs(Align::Right);
 	style.add(type);
 }
 
-void TextView::textEllipsis(Ellipsis type)
+void TextView::textEllipsis(bool state)
 {
-	style.subs(Ellipsis::End);
-	style.subs(Ellipsis::Path);
-	style.subs(Ellipsis::Word);
-	if (type != Ellipsis::None)
-		style.add(type);
+	if (state)
+		style.add(SS_WORDELLIPSIS);
+	else
+		style.subs(SS_WORDELLIPSIS);
 }
 
 void TextView::simple(bool state)
@@ -78,10 +67,10 @@ void TextView::simple(bool state)
 		style.subs(SS_SIMPLE);
 }
 
-void TextView::sunken(bool state)
+LRESULT TextView::onDraw(HDC hdc)
 {
-	if (state)
-		style.add(SS_SUNKEN);
-	else
-		style.subs(SS_SUNKEN);
+	SetBkMode(hdc, TRANSPARENT);
+	SetTextColor(hdc, mFColor);
+	SetDCBrushColor(hdc, mBColor);
+	return (LRESULT)GetStockObject(DC_BRUSH);
 }

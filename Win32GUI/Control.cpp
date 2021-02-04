@@ -98,49 +98,53 @@ void Control::border(bool state)
 {
     if (state) style.add(WS_BORDER);
     else style.subs(WS_BORDER);
+    UpdateStyle(mHwnd);
 }
 
 void Control::clientEdge(bool state)
 {
     if (state) exstyle.add(WS_EX_CLIENTEDGE);
     else exstyle.subs(WS_EX_CLIENTEDGE);
+    UpdateStyle(mHwnd);
 }
 
 void Control::modalFrame(bool state)
 {
     if (state) exstyle.add(WS_EX_DLGMODALFRAME);
     else exstyle.subs(WS_EX_DLGMODALFRAME);
+    UpdateStyle(mHwnd);
 }
 
 void Control::staticEdge(bool state)
 {
     if (state) exstyle.add(WS_EX_STATICEDGE);
     else exstyle.subs(WS_EX_STATICEDGE);
+    UpdateStyle(mHwnd);
 }
 
 void Control::size(LONG width, LONG height)
 {
-    size(SIZE{ width, height });
+    size({ width, height });
 }
 
 void Control::size(SIZE p)
 {
-    SetWindowPos(mHwnd, NULL, 0, 0, p.cx, p.cy, SWP_NOMOVE);
+    SetWindowPos(mHwnd, NULL, 0, 0, p.cx, p.cy, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 void Control::position(LONG width, LONG height)
 {
-    size(SIZE{ width, height });
+    position({ width, height });
 }
 
 void Control::position(POINT p)
 {
-    SetWindowPos(mHwnd, NULL, p.x, p.y, 0, 0, SWP_NOSIZE);
+    SetWindowPos(mHwnd, NULL, p.x, p.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 void Control::rect(RECT r)
 {
-    SetWindowPos(mHwnd, NULL, r.left, r.top, r.right, r.bottom, NULL);
+    SetWindowPos(mHwnd, NULL, r.left, r.top, r.right, r.bottom, SWP_NOZORDER);
 }
 
 void Control::clientRect(RECT r)
@@ -445,7 +449,7 @@ LRESULT Control::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 DWORD Control::Style::get()
 {
-    return GetWindowLong(mOuter->mHwnd, GWL_STYLE);
+    return GetWindowLong(mOuter->mHwnd, mType);
 }
 
 bool Control::Style::has(DWORD f)
@@ -455,12 +459,12 @@ bool Control::Style::has(DWORD f)
 
 void Control::Style::add(DWORD f)
 {
-    SetWindowLongPtr(mOuter->mHwnd, GWL_STYLE, get() | f);
+    SetWindowLongPtr(mOuter->mHwnd, mType, get() | f);
 }
 
 void Control::Style::subs(DWORD f)
 {
-    SetWindowLongPtr(mOuter->mHwnd, GWL_STYLE, get() & ~f);
+    SetWindowLongPtr(mOuter->mHwnd, mType, get() & ~f);
 }
 
 LRESULT CALLBACK Control::MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
