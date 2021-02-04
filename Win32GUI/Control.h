@@ -5,11 +5,22 @@
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-#include <windowsx.h>
-#include <functional>
+#include <iostream>
+#include <string>
 #include <vector>
-#include "WndClass.h"
+#include <functional>
+#include <windows.h>
+#include <windowsx.h>
 
+#ifdef UNICODE
+typedef std::wstring TSTRING;
+#define STDOUT std::wcout
+#define _IOTA(X) std::to_wstring(X)
+#else /* Multi-Byte */
+typedef std::string TSTRING;
+#define STDOUT std::cout
+#define _IOTA(X) std::to_string(X)
+#endif
 #define LPARAM2POINT(pm) { GET_X_LPARAM(pm), GET_Y_LPARAM(pm) }
 #define AsControl(hwnd) (Control*)GetWindowLongPtr(hwnd, GWLP_USERDATA)
 #define SetControl(hwnd, ptr) SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)ptr)
@@ -35,6 +46,12 @@ typedef std::function<void(Control*, DWORD, POINT)> OnMouseWheelFunc;
 class Control
 {
 public:
+	/*	Attempts to destroy the window item and release
+		any allocated resources.
+		@param none
+	*/
+	~Control();
+
 	////////////////////////////////////////////////////////////
 	// Window: Getters & Setters
 	////////////////////////////////////////////////////////////
@@ -67,22 +84,22 @@ public:
 		/*	Returns the whole Style flags parameter.
 			@return DWORD
 		*/
-		inline DWORD get();
+		DWORD get();
 		/*	Returns whether the Style has a specific flag.
 			@param DWORD flag
 			@return bool
 		*/
-		inline bool has(DWORD);
+		bool has(DWORD);
 		/*	AdAppends a flag to the Style.
 			@param DWORD flag
 		*/
-		inline void add(DWORD);
+		void add(DWORD);
 		/*	Removes a flag from the Style.
 			@param DWORD flag
 		*/
-		inline void subs(DWORD);
+		void subs(DWORD);
 		// Do not change these parameters. Style may not work.
-		Control* mOuter; DWORD mType;
+		Control* mOuter; int mType;
 	} style = { this, GWL_STYLE }, exstyle = { this, GWL_EXSTYLE };
 
 	/*	Sets the parsed control Text/Title field.
@@ -273,12 +290,12 @@ public:
 		just an inline that calls the visible(true) function.
 		@param none
 	*/
-	inline void show();
+	void show();
 	/*	Sets the visible state of the window to false. This is 
 		just an inline that calls the visible(false) function.
 		@param none
 	*/
-	inline void hide();
+	void hide();
 	/*	Attempts to update/set the current font if any given a 
 		previously setup LOGFONT.
 		@param none
@@ -319,14 +336,17 @@ public:
 		@param OnMouseWheelFunc void(Control*, DWORD, POINT)
 	*/
 	void setOnMouseWheel(OnMouseWheelFunc);
-	/*	Attempts to destroy the window item and release 
-		any allocated resources.
-		@param none
-	*/
-	~Control();
+
+	static ATOM initialize(HINSTANCE = GetModuleHandle(NULL));
+	static void join();
+	static TSTRING lastError();
+	static BOOL finalize();
 
 protected:
 	friend class Window;
+	static thread_local ATOM cName;
+	static thread_local HINSTANCE instance;
+	static thread_local unsigned int wndCount;
 	HWND mHwnd;
 	COLORREF mBColor, mFColor;
 	LOGFONT mFont;
@@ -336,15 +356,6 @@ protected:
 	OnDoubleClickFunc mOnDoubleClick = NULL;
 	OnMouseWheelFunc mOnMouseWheel = NULL;
 
-	/*	Parent Constructor. Creates a parent window from the
-		given arguments.
-		@param HINSTANCE Current Instance NOT NULL
-		@param PCTSTR WNDCLASS name
-		@param PCTSTR Text
-		@param DWORD Style
-		@param RECT rectangle
-	*/
-	Control(HINSTANCE, PCTSTR, PCTSTR, DWORD, RECT);
 	/*	Child Constructor. Creates a child window from the 
 		given arguments.
 		@param Control* Parent NOT NULL
@@ -361,8 +372,8 @@ protected:
 	*/
 	Control(const Control&) = delete;
 	/*	Default onDraw function.
-		Called by: Window::WndProc
-	*/
+	Called by: Window::WndProc
+*/
 	virtual LRESULT onDraw(HDC);
 	/*	Default onHover function.
 		Called by: Window::WndProc
@@ -384,4 +395,5 @@ protected:
 		Called by: Window::WndProc
 	*/
 	virtual LRESULT procedure(UINT, WPARAM, LPARAM);
+	static LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 };

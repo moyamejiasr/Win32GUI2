@@ -13,7 +13,6 @@ class Window: public Control
 {
 public:
 	Window(TSTRING, LONG = 320, LONG = 240);
-	Window(TSTRING, DWORD, RECT);
 	Window(Control*, TSTRING, DWORD, RECT);
 
 	////////////////////////////////////////////////////////////
@@ -119,12 +118,11 @@ protected:
 	POINT mMinSize = { 120, 80 };
 	POINT mMaxSize = { 1920, 1080 };
 
-	static thread_local WndClass mWClass;
 	virtual LRESULT onDraw(HDC);
 	virtual bool onClose();
 	virtual void onFocus(bool);
 	virtual void onResize(POINT);
 	virtual void onMove(POINT);
-	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+	virtual LRESULT procedure(UINT, WPARAM, LPARAM);
 };
 

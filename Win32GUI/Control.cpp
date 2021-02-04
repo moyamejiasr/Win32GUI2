@@ -1,4 +1,18 @@
 #include "Control.h"
+#include "Control.h"
+
+thread_local ATOM Control::cName = initialize();
+thread_local HINSTANCE Control::instance = NULL;
+thread_local unsigned int Control::wndCount = 0;
+
+Control::~Control()
+{
+    if (!mHwnd) return;
+    HFONT pFont = (HFONT)SendMessage(mHwnd, WM_GETFONT, NULL, NULL);
+    if (pFont != NULL) DeleteObject(pFont);
+    DestroyWindow(mHwnd);
+    mHwnd = nullptr;
+}
 
 HDC Control::hdc()
 {
@@ -210,12 +224,12 @@ inline UINT Control::childCount()
     return count;
 }
 
-inline void Control::show()
+void Control::show()
 {
     visible(true);
 }
 
-inline void Control::hide()
+void Control::hide()
 {
     visible(false);
 }
@@ -267,51 +281,82 @@ void Control::setOnMouseWheel(OnMouseWheelFunc func)
     mOnMouseWheel = func;
 }
 
-Control::~Control()
+ATOM Control::initialize(HINSTANCE instance)
 {
-    if (!mHwnd) return;
-    HFONT pFont = (HFONT)SendMessage(mHwnd, WM_GETFONT, NULL, NULL);
-    if (pFont != NULL) DeleteObject(pFont);
-    DestroyWindow(mHwnd);
-    mHwnd = nullptr;
+    if (Control::instance) finalize();
+
+    WNDCLASS wndClass{ CS_DBLCLKS, MainWndProc,
+        0, 0, Control::instance = instance };
+    TSTRING class_name = _IOTA(GetCurrentThreadId());
+    wndClass.lpszClassName = class_name.c_str();
+
+    return cName = RegisterClass(&wndClass);
 }
 
-Control::Control(HINSTANCE instance, PCTSTR type, PCTSTR text, DWORD style, RECT rect)
+void Control::join()
 {
-    // Setup text data
-    // Use system parameters
-    NONCLIENTMETRICS metrics{ sizeof(NONCLIENTMETRICS) };
-    SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
-    mFont = metrics.lfMessageFont;
-    mBColor = GetSysColor(COLOR_3DFACE); mFColor = GetSysColor(COLOR_WINDOWTEXT);
+    MSG msg;
+    int wndCount = 0;
+    while (GetMessage(&msg, NULL, 0, 0) > 0)
+    {
+        if (msg.message == WM_CREATE)
+            std::cout << "yes!";
+        else
+            std::cout << std::hex << msg.message << std::endl;
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+}
 
-    // Create window
-    mHwnd = CreateWindowEx(NULL, type, text, style,
-        rect.left, rect.top, rect.right, rect.bottom,
-        NULL, NULL, instance, NULL);
-    if (!mHwnd) exit(-2);
+TSTRING Control::lastError()
+{
+    DWORD error = GetLastError();
+    if (!error) return TSTRING();
+    LPTSTR buffer = nullptr;
+    size_t size = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&buffer, 0, NULL);
+    TSTRING result(buffer, size);
+    LocalFree(buffer);
+    return result;
+}
 
-    // Update window data
-    SetControl(mHwnd, this);
-    updateFont(); 
-    // Update function last.
-    // It invokes the procedure and may fail
-    // if control has not been set already.
+BOOL Control::finalize()
+{
+    return UnregisterClass(MAKEINTATOM(cName), instance);
 }
 
 Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, RECT rect)
 {
     // Setup text data
-    // Inherit from parent
-    mFont = parent->mFont;
-    mFColor = parent->mFColor; mBColor = parent->mBColor;
+    if (parent)
+    {
+        // Inherit from parent
+        mFont = parent->mFont;
+        mFColor = parent->mFColor; mBColor = parent->mBColor;
+    }
+    else 
+    {
+        // Use system parameters
+        NONCLIENTMETRICS metrics{ sizeof(NONCLIENTMETRICS) };
+        SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
+        mFont = metrics.lfMessageFont;
+        mBColor = GetSysColor(COLOR_3DFACE); mFColor = GetSysColor(COLOR_WINDOWTEXT);
+    }
 
     // Create window
-    mHwnd = CreateWindowEx(NULL, type, text, style,
+    mHwnd = CreateWindow(type, text, parent ? style + WS_CHILD : style,
         rect.left, rect.top, rect.right, rect.bottom,
-        parent->mHwnd, (HMENU)GetTickCount(), // Use ticks as id
-        parent->hinstance(), NULL);
-    if (!mHwnd) exit(-2);
+        parent ? parent->mHwnd : NULL, 
+        parent ? (HMENU)GetTickCount() : NULL, // Use ticks as id
+        instance, NULL);
+    if (!mHwnd) 
+    {
+#ifdef _DEBUG
+        STDOUT << lastError() << std::endl;
+#endif // _DEBUG
+        return;
+    }
 
     // Update window data
     SetControl(mHwnd, this);
@@ -329,45 +374,72 @@ LRESULT Control::onDraw(HDC hdc)
 
 void Control::onHover(bool state)
 {
-    if (mOnHover) mOnHover(this, state);
+    if (mOnHover)
+        mOnHover(this, state);
 }
 
 void Control::onClick(DWORD keys, POINT point)
 {
-    if (mOnClick) mOnClick(this, keys, point);
+    if (mOnClick)
+        mOnClick(this, keys, point);
 }
 
 void Control::onDoubleClick(DWORD keys, POINT point)
 {
-    if (mOnDoubleClick) mOnDoubleClick(this, keys, point);
+    if (mOnDoubleClick)
+        mOnDoubleClick(this, keys, point);
 }
 
 void Control::onMouseWheel(DWORD value, POINT point)
 {
-    if (mOnMouseWheel) mOnMouseWheel(this, value, point);
+    if (mOnMouseWheel)
+        mOnMouseWheel(this, value, point);
 }
 
 LRESULT Control::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    // Default-handle unhandled messages like WM_CANCELMODE.
+    // Most happen before the Window constructor returns or after
+    // the destructor gets called, as the class vtable is not set.
     return DefWindowProc(this->mHwnd, uMsg, wParam, lParam);
 }
 
-inline DWORD Control::Style::get()
+DWORD Control::Style::get()
 {
     return GetWindowLong(mOuter->mHwnd, GWL_STYLE);
 }
 
-inline bool Control::Style::has(DWORD f)
+bool Control::Style::has(DWORD f)
 {
     return get() & f;
 }
 
-inline void Control::Style::add(DWORD f)
+void Control::Style::add(DWORD f)
 {
     SetWindowLongPtr(mOuter->mHwnd, GWL_STYLE, get() | f);
 }
 
-inline void Control::Style::subs(DWORD f)
+void Control::Style::subs(DWORD f)
 {
     SetWindowLongPtr(mOuter->mHwnd, GWL_STYLE, get() & ~f);
+}
+
+LRESULT CALLBACK Control::MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    // Keep a list of active child windows to end 
+    // the loop once all of them get destroyed.
+    switch (uMsg) {
+    case WM_CREATE:
+        wndCount++;
+        break;
+    case WM_DESTROY:
+        wndCount--;
+        // Check if no more windows active
+        if (!wndCount)
+            PostQuitMessage(0);
+        break;
+    }
+    Control* control = AsControl(hwnd); // Will fail until ptr set in constructor
+    if (control) return control->procedure(uMsg, wParam, lParam);
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
