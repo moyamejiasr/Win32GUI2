@@ -74,6 +74,50 @@ RECT Control::clientRect()
     return rect;
 }
 
+bool Control::border()
+{
+    return style.has(WS_BORDER);
+}
+
+bool Control::clientEdge()
+{
+    return exstyle.has(WS_EX_CLIENTEDGE);
+}
+
+bool Control::modalFrame()
+{
+    return exstyle.has(WS_EX_DLGMODALFRAME);
+}
+
+bool Control::staticEdge()
+{
+    return exstyle.has(WS_EX_STATICEDGE);
+}
+
+void Control::border(bool state)
+{
+    if (state) style.add(WS_BORDER);
+    else style.subs(WS_BORDER);
+}
+
+void Control::clientEdge(bool state)
+{
+    if (state) exstyle.add(WS_EX_CLIENTEDGE);
+    else exstyle.subs(WS_EX_CLIENTEDGE);
+}
+
+void Control::modalFrame(bool state)
+{
+    if (state) exstyle.add(WS_EX_DLGMODALFRAME);
+    else exstyle.subs(WS_EX_DLGMODALFRAME);
+}
+
+void Control::staticEdge(bool state)
+{
+    if (state) exstyle.add(WS_EX_STATICEDGE);
+    else exstyle.subs(WS_EX_STATICEDGE);
+}
+
 void Control::size(LONG width, LONG height)
 {
     size(SIZE{ width, height });
@@ -289,20 +333,15 @@ ATOM Control::initialize(HINSTANCE instance)
         0, 0, Control::instance = instance };
     TSTRING class_name = _IOTA(GetCurrentThreadId());
     wndClass.lpszClassName = class_name.c_str();
-
+    wndClass.hCursor = LoadCursor(0, IDC_ARROW);
     return cName = RegisterClass(&wndClass);
 }
 
 void Control::join()
 {
     MSG msg;
-    int wndCount = 0;
     while (GetMessage(&msg, NULL, 0, 0) > 0)
     {
-        if (msg.message == WM_CREATE)
-            std::cout << "yes!";
-        else
-            std::cout << std::hex << msg.message << std::endl;
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
@@ -345,7 +384,7 @@ Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, RECT re
     }
 
     // Create window
-    mHwnd = CreateWindow(type, text, parent ? style + WS_CHILD : style,
+    mHwnd = CreateWindow(type, text, style,
         rect.left, rect.top, rect.right, rect.bottom,
         parent ? parent->mHwnd : NULL, 
         parent ? (HMENU)GetTickCount() : NULL, // Use ticks as id

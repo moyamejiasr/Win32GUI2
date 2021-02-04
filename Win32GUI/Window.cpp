@@ -7,7 +7,7 @@ Window::Window(TSTRING text, LONG width, LONG height)
 
 Window::Window(Control* parent, TSTRING text, DWORD style, RECT rect)
     :Control(parent, MAKEINTATOM(cName), text.c_str(),
-        style, rect)
+        parent ? style | WS_CHILD : style, rect)
 {}
 
 POINT Window::minSize()
@@ -50,11 +50,6 @@ bool Window::resizable()
 	return style.has(WS_THICKFRAME);
 }
 
-bool Window::clientEdge()
-{
-	return exstyle.has(WS_EX_CLIENTEDGE);
-}
-
 bool Window::clipChildren()
 {
 	return style.has(WS_CLIPCHILDREN);
@@ -85,16 +80,6 @@ bool Window::layered()
 	return exstyle.has(WS_EX_LAYERED);
 }
 
-bool Window::layoutRTL()
-{
-	return exstyle.has(WS_EX_LAYOUTRTL);
-}
-
-bool Window::readingRTL()
-{
-	return style.has(WS_EX_RTLREADING);
-}
-
 bool Window::leftScrollbar()
 {
 	return exstyle.has(WS_EX_LEFTSCROLLBAR);
@@ -115,11 +100,6 @@ bool Window::focusable()
 	return exstyle.has(WS_EX_NOACTIVATE);
 }
 
-bool Window::staticEdge()
-{
-	return exstyle.has(WS_EX_STATICEDGE);
-}
-
 bool Window::sysMenu()
 {
 	return style.has(WS_SYSMENU);
@@ -128,11 +108,6 @@ bool Window::sysMenu()
 bool Window::topMost()
 {
 	return exstyle.has(WS_EX_TOPMOST);
-}
-
-bool Window::transparent()
-{
-	return exstyle.has(WS_EX_TRANSPARENT);
 }
 
 void Window::titleBar(bool state)
@@ -145,12 +120,6 @@ void Window::resizable(bool state)
 {
 	if (state) style.add(WS_THICKFRAME);
 	else style.subs(WS_THICKFRAME);
-}
-
-void Window::clientEdge(bool state)
-{
-	if (state) exstyle.add(WS_EX_CLIENTEDGE);
-	else exstyle.subs(WS_EX_CLIENTEDGE);
 }
 
 void Window::clipChildren(bool state)
@@ -189,18 +158,6 @@ void Window::layered(bool state)
 	else exstyle.subs(WS_EX_LAYERED);
 }
 
-void Window::layoutRTL(bool state)
-{
-	if (state) exstyle.add(WS_EX_LAYOUTRTL);
-	else exstyle.subs(WS_EX_LAYOUTRTL);
-}
-
-void Window::readingRTL(bool state)
-{
-	if (state) style.add(WS_EX_RTLREADING);
-	else style.subs(WS_EX_RTLREADING);
-}
-
 void Window::leftScrollbar(bool state)
 {
 	if (state) exstyle.add(WS_EX_LEFTSCROLLBAR);
@@ -225,12 +182,6 @@ void Window::focusable(bool state)
 	else exstyle.subs(WS_EX_NOACTIVATE);
 }
 
-void Window::staticEdge(bool state)
-{
-	if (state) exstyle.add(WS_EX_STATICEDGE);
-	else exstyle.subs(WS_EX_STATICEDGE);
-}
-
 void Window::sysMenu(bool state)
 {
 	if (state) style.add(WS_SYSMENU);
@@ -244,12 +195,6 @@ void Window::topMost(bool state)
 		flag = HWND_TOPMOST;
 	SetWindowPos(mHwnd, flag, 0, 0, 0, 
 		0, SWP_NOMOVE | SWP_NOSIZE);
-}
-
-void Window::transparent(bool state)
-{
-	if (state) exstyle.add(WS_EX_TRANSPARENT);
-	else exstyle.subs(WS_EX_TRANSPARENT);
 }
 
 bool Window::appWindow()

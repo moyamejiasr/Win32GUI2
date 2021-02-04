@@ -5,12 +5,14 @@
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+#pragma comment(lib, "comctl32.lib")
 #include <iostream>
 #include <string>
 #include <vector>
 #include <functional>
 #include <windows.h>
 #include <windowsx.h>
+#include <commctrl.h>
 
 #ifdef UNICODE
 typedef std::wstring TSTRING;
@@ -34,6 +36,13 @@ typedef std::function<LRESULT(Control*, bool)> OnHoverFunc;
 typedef std::function<void(Control*, DWORD, POINT)> OnClickFunc;
 typedef std::function<void(Control*, DWORD, POINT)> OnDoubleClickFunc;
 typedef std::function<void(Control*, DWORD, POINT)> OnMouseWheelFunc;
+
+enum TextAlign
+{
+	Left = SS_LEFT,
+	Center = SS_CENTER,
+	Right = SS_RIGHT
+};
 
 /*	Abstract class. It must not be implemented but inherited or 
 	casted to/from. It handles most of the common Win32 Windows 
@@ -165,7 +174,15 @@ public:
 	// Appearance: Getters & Setters
 	////////////////////////////////////////////////////////////
 
-	/*	No common appearance */
+	bool border();
+	bool clientEdge();
+	bool modalFrame();
+	bool staticEdge();
+
+	void border(bool);
+	void clientEdge(bool);
+	void modalFrame(bool);
+	void staticEdge(bool);
 
 	////////////////////////////////////////////////////////////
 	// Behavior: Getters & Setters

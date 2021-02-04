@@ -38,43 +38,33 @@ public:
 
 	bool titleBar();
 	bool resizable();
-	bool clientEdge();
 	bool clipChildren();
 	bool clipSiblings();
 	bool composited();
 	bool hScrollbar();
 	bool vScrollbar();
 	bool layered();
-	bool layoutRTL();
-	bool readingRTL();
 	bool leftScrollbar();
 	bool maximizeBox();
 	bool minimizeBox();
 	bool focusable();
-	bool staticEdge();
 	bool sysMenu();
 	bool topMost();
-	bool transparent();
 
 	void titleBar(bool);
 	void resizable(bool);
-	void clientEdge(bool);
 	void clipChildren(bool);
 	void clipSiblings(bool);
 	void composited(bool);
 	void hScrollbar(bool);
 	void vScrollbar(bool);
 	void layered(bool);
-	void layoutRTL(bool);
-	void readingRTL(bool);
 	void leftScrollbar(bool);
 	void maximizeBox(bool);
 	void minimizeBox(bool);
 	void focusable(bool);
-	void staticEdge(bool);
 	void sysMenu(bool);
 	void topMost(bool);
-	void transparent(bool);
 
 	////////////////////////////////////////////////////////////
 	// Behavior: Getters & Setters
