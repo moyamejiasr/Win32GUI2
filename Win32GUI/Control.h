@@ -163,6 +163,12 @@ public:
 	*/
 	void rect(RECT);
 	/*	Sets the rectangle of the Control in a struct. 
+		It differs from rect() in that it converts point 
+		units to screen pixels.
+		@param RECT (left, top, right, bottom)
+	*/
+	void pointRect(RECT);
+	/*	Sets the rectangle of the Control in a struct. 
 		It differs from the rect function in that it calculates 
 		the size of the normal rectangle needed to allocate a 
 		client rectangle of the given size.

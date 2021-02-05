@@ -4,13 +4,15 @@
 
 int main() {
 	Window main(L"Hello world");
+	main.show();
 
 	TextView txt(&main, L"Hello world, how are you feeling today?", 92, 68);
 	txt.staticEdge(true);
 	txt.position(12, 6);
 
-	EditText edit(&main, L"Write here", 120);
+	EditText edit(&main, L"", 120);
 	edit.position(116, 6);
+	edit.password(true);
 
 	MultiEditText medit(&main, L"Write here", 120);
 	medit.heightInLines(3);
@@ -18,7 +20,6 @@ int main() {
 	medit.hScrollbar(true);
 	medit.vScrollbar(true);
 
-	main.show();
 	Control::join();
 	return 0;
 }

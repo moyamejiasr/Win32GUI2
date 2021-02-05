@@ -51,7 +51,7 @@ void Control::text(TSTRING text)
 SIZE Control::size()
 {
     RECT it = rect();
-    return { it.right, it.bottom };
+    return { it.right - it.left, it.bottom - it.top };
 }
 
 POINT Control::position()
@@ -169,6 +169,12 @@ void Control::position(POINT p)
 void Control::rect(RECT r)
 {
     SetWindowPos(mHwnd, NULL, r.left, r.top, r.right, r.bottom, SWP_NOZORDER);
+}
+
+void Control::pointRect(RECT r)
+{
+    MapDialogRect(mHwnd, &r);
+    rect(r);
 }
 
 void Control::clientRect(RECT r)
