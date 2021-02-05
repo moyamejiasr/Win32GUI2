@@ -9,10 +9,11 @@ int main() {
 	txt.staticEdge(true);
 	txt.position(12, 6);
 
-	EditText edit(&main, L"Write here", 164, 42);
+	EditText edit(&main, L"Write here", 120);
 	edit.position(116, 6);
 
-	MultiEditText medit(&main, L"Write here", 164, 92);
+	MultiEditText medit(&main, L"Write here", 120);
+	medit.heightInLines(3);
 	medit.position(116, 54);
 	medit.hScrollbar(true);
 	medit.vScrollbar(true);

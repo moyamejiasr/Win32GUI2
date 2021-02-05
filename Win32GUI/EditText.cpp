@@ -1,7 +1,7 @@
 #include "EditText.h"
 
 EditText::EditText(Control* parent, TSTRING text, int width, int height)
-    :EditText(parent, text, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | ES_AUTOHSCROLL,
+    :EditText(parent, text, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
         { 0, 0, width, height })
 {}
 
@@ -103,10 +103,6 @@ LRESULT EditText::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (HIWORD(wParam))
     {
-    case EN_HSCROLL:
-    {
-
-    }
     case EN_CHANGE:
         break;
     case EN_MAXTEXT:

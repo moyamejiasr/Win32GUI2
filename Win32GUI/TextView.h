@@ -7,7 +7,7 @@
 class TextView: public Control
 {
 public:
-	TextView(Control*, TSTRING, int = CW_USEDEFAULT, int = CW_USEDEFAULT);
+	TextView(Control*, TSTRING, int = CW_USEDEFAULT, int = 13);
 	TextView(Control*, TSTRING, DWORD, RECT);
 
 	////////////////////////////////////////////////////////////

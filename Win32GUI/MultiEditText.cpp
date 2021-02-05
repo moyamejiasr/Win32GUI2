@@ -8,3 +8,10 @@ MultiEditText::MultiEditText(Control* parent, TSTRING text, int width, int heigh
 MultiEditText::MultiEditText(Control* parent, TSTRING text, DWORD style, RECT rect)
     : EditText(parent, text.c_str(), style, rect)
 {}
+
+void MultiEditText::heightInLines(int count)
+{
+    SIZE cur = size();
+    cur.cy = 23 + 16 * (count);
+    size(cur);
+}

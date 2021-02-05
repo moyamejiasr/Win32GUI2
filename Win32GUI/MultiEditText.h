@@ -7,7 +7,9 @@
 class MultiEditText: public EditText
 {
 public:
-	MultiEditText(Control*, TSTRING, int, int);
+	MultiEditText(Control*, TSTRING, int, int = 23);
 	MultiEditText(Control*, TSTRING, DWORD, RECT);
+
+	void heightInLines(int);
 };
 
