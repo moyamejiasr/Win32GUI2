@@ -14,12 +14,11 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <windowsx.h>
 #include <commctrl.h>
 
+typedef std::basic_string<TCHAR> TSTRING;
 #ifdef UNICODE
-typedef std::wstring TSTRING;
 #define STDOUT std::wcout
 #define _IOTA(X) std::to_wstring(X)
 #else /* Multi-Byte */
-typedef std::string TSTRING;
 #define STDOUT std::cout
 #define _IOTA(X) std::to_string(X)
 #endif
@@ -176,11 +175,15 @@ public:
 	////////////////////////////////////////////////////////////
 
 	bool border();
+	bool hScrollbar();
+	bool vScrollbar();
 	bool clientEdge();
 	bool modalFrame();
 	bool staticEdge();
 
 	void border(bool);
+	void hScrollbar(bool);
+	void vScrollbar(bool);
 	void clientEdge(bool);
 	void modalFrame(bool);
 	void staticEdge(bool);

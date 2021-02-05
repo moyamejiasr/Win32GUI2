@@ -65,16 +65,6 @@ bool Window::composited()
 	return exstyle.has(WS_EX_COMPOSITED);
 }
 
-bool Window::hScrollbar()
-{
-	return style.has(WS_HSCROLL);
-}
-
-bool Window::vScrollbar()
-{
-	return style.has(WS_VSCROLL);
-}
-
 bool Window::layered()
 {
 	return exstyle.has(WS_EX_LAYERED);
@@ -138,18 +128,6 @@ void Window::composited(bool state)
 {
 	if (state) exstyle.add(WS_EX_COMPOSITED);
 	else style.subs(WS_EX_COMPOSITED);
-}
-
-void Window::hScrollbar(bool state)
-{
-	if (state) style.add(WS_HSCROLL);
-	else style.subs(WS_HSCROLL);
-}
-
-void Window::vScrollbar(bool state)
-{
-	if (state) style.add(WS_VSCROLL);
-	else style.subs(WS_VSCROLL);
 }
 
 void Window::layered(bool state)

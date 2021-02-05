@@ -41,8 +41,6 @@ public:
 	bool clipChildren();
 	bool clipSiblings();
 	bool composited();
-	bool hScrollbar();
-	bool vScrollbar();
 	bool layered();
 	bool leftScrollbar();
 	bool maximizeBox();
@@ -56,8 +54,6 @@ public:
 	void clipChildren(bool);
 	void clipSiblings(bool);
 	void composited(bool);
-	void hScrollbar(bool);
-	void vScrollbar(bool);
 	void layered(bool);
 	void leftScrollbar(bool);
 	void maximizeBox(bool);

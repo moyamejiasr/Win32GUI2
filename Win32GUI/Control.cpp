@@ -79,6 +79,16 @@ bool Control::border()
     return style.has(WS_BORDER);
 }
 
+bool Control::hScrollbar()
+{
+    return style.has(WS_HSCROLL);
+}
+
+bool Control::vScrollbar()
+{
+    return style.has(WS_VSCROLL);
+}
+
 bool Control::clientEdge()
 {
     return exstyle.has(WS_EX_CLIENTEDGE);
@@ -98,6 +108,20 @@ void Control::border(bool state)
 {
     if (state) style.add(WS_BORDER);
     else style.subs(WS_BORDER);
+    UpdateStyle(mHwnd);
+}
+
+void Control::hScrollbar(bool state)
+{
+    if (state) style.add(WS_HSCROLL);
+    else style.subs(WS_HSCROLL);
+    UpdateStyle(mHwnd);
+}
+
+void Control::vScrollbar(bool state)
+{
+    if (state) style.add(WS_VSCROLL);
+    else style.subs(WS_VSCROLL);
     UpdateStyle(mHwnd);
 }
 

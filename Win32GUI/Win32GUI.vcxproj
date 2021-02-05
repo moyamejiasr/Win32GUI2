@@ -152,11 +152,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Control.h" />
+    <ClInclude Include="EditText.h" />
+    <ClInclude Include="MultiEditText.h" />
     <ClInclude Include="TextView.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Control.cpp" />
+    <ClCompile Include="EditText.cpp" />
+    <ClCompile Include="MultiEditText.cpp" />
     <ClCompile Include="TextView.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
