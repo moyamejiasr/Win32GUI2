@@ -7,7 +7,12 @@ EditText::EditText(Control* parent, TSTRING text, int width, int height)
 
 EditText::EditText(Control* parent, TSTRING text, DWORD style, RECT rect)
     : Control(parent, WC_EDIT, text.c_str(), style, rect)
-{}
+{
+    // This hack allows us to preserve the white background
+    // unless it is specifically requested otherwise.
+    // Window-color backgrounds are ugly.
+    mBColor = 0xFFFFFF;
+}
 
 Align EditText::textAlign()
 {
@@ -98,14 +103,6 @@ void EditText::readonly(bool state)
     // ES_READONLY needs special message
     // when control is already created.
     SendMessage(mHwnd, EM_SETREADONLY, state, NULL);
-}
-
-LRESULT EditText::onDraw(HDC hdc)
-{
-    // Do not change background by default.
-    // It is ugly. Rewrite if you REALLY want to.
-    SetTextColor(hdc, mFColor);
-    return (INT_PTR)GetStockObject(WHITE_BRUSH);
 }
 
 LRESULT EditText::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)

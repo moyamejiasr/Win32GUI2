@@ -38,8 +38,5 @@ public:
 	////////////////////////////////////////////////////////////
 
 	/*	No behavior properties */
-
-protected:
-	LRESULT onDraw(HDC hdc);
 };
 

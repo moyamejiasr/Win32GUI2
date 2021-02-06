@@ -29,7 +29,6 @@ public:
 	void icon(HICON);
 
 protected:
-	LRESULT onDraw(HDC hdc);
 	LRESULT procedure(UINT, WPARAM, LPARAM);
 };
 

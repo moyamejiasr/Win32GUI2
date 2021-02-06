@@ -48,7 +48,6 @@ public:
 	void readonly(bool);
 
 protected:
-	virtual LRESULT onDraw(HDC);
 	virtual LRESULT procedure(UINT, WPARAM, LPARAM);
 };
 

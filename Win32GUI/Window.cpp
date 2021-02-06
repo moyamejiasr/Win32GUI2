@@ -288,7 +288,7 @@ LRESULT Window::onDraw(HDC hdc)
 	GetClientRect(mHwnd, &rect);
 	SetDCBrushColor(hdc, mBColor);
 	FillRect(hdc, &rect, (HBRUSH)GetStockObject(DC_BRUSH));
-	return true;
+	return TRUE;
 }
 
 bool Window::onClose()

@@ -179,12 +179,8 @@ void Control::pointRect(RECT r)
 
 void Control::clientRect(RECT r)
 {
-    // Adjust rect from client to total.
-    // Ignore X64 cast errors because we only want to 
-    // check if a menu is present.
-    // TODO: Use better menu checker
-    AdjustWindowRectEx(&r, style.get(),
-        reinterpret_cast<BOOL>(GetMenu(mHwnd)), exstyle.get());
+    AdjustWindowRectEx(&r, style.get(), 
+        GetMenu(mHwnd) == NULL, exstyle.get());
     rect(r);
 }
 
@@ -440,8 +436,12 @@ Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, RECT re
 
 LRESULT Control::onDraw(HDC hdc)
 {
-    // Invoke default behavior
-    return FALSE;
+    if (mOnDraw)
+        return mOnDraw(this, hdc);
+    SetBkMode(hdc, TRANSPARENT);
+    SetTextColor(hdc, mFColor);
+    SetDCBrushColor(hdc, mBColor);
+    return (LRESULT)GetStockObject(DC_BRUSH);
 }
 
 void Control::onHover(bool state)

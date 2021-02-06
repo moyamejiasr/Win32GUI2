@@ -75,11 +75,3 @@ void TextView::simple(bool state)
 	else
 		style.subs(SS_SIMPLE);
 }
-
-LRESULT TextView::onDraw(HDC hdc)
-{
-	SetBkMode(hdc, TRANSPARENT);
-	SetTextColor(hdc, mFColor);
-	SetDCBrushColor(hdc, mBColor);
-	return (LRESULT)GetStockObject(DC_BRUSH);
-}

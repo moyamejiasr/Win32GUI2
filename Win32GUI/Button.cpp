@@ -125,14 +125,6 @@ void Button::icon(HICON icon)
 		DeleteObject(old);
 }
 
-LRESULT Button::onDraw(HDC hdc)
-{
-	SetBkMode(hdc, TRANSPARENT);
-	SetTextColor(hdc, mFColor);
-	SetDCBrushColor(hdc, mBColor);
-	return (LRESULT)GetStockObject(DC_BRUSH);
-}
-
 LRESULT Button::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (HIWORD(wParam))
