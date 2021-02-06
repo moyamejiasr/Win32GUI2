@@ -156,6 +156,7 @@
     <ClInclude Include="Control.h" />
     <ClInclude Include="EditText.h" />
     <ClInclude Include="ImageButton.h" />
+    <ClInclude Include="Manager.h" />
     <ClInclude Include="MultiEditText.h" />
     <ClInclude Include="TextView.h" />
     <ClInclude Include="Window.h" />

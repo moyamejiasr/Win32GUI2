@@ -1,8 +1,4 @@
-#include "../Win32GUI/Window.h"
-#include "../Win32GUI/TextView.h"
-#include "../Win32GUI/MultiEditText.h"
-#include "../Win32GUI/ImageButton.h"
-#include "../Win32GUI/CommandLink.h"
+#include "../Win32GUI/Manager.h"
 
 int main() {
 	Window main(L"Hello world");
