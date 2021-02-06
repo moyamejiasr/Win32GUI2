@@ -1,6 +1,7 @@
 #include "../Win32GUI/Window.h"
 #include "../Win32GUI/TextView.h"
 #include "../Win32GUI/MultiEditText.h"
+#include "../Win32GUI/Button.h"
 
 int main() {
 	Window main(L"Hello world");
@@ -11,14 +12,19 @@ int main() {
 	txt.position(12, 6);
 
 	EditText edit(&main, L"", 120);
-	edit.position(116, 6);
+	edit.position(12, 80);
 	edit.password(true);
 
 	MultiEditText medit(&main, L"Write here", 120);
 	medit.heightInLines(3);
-	medit.position(116, 54);
+	medit.position(116, 6);
 	medit.hScrollbar(true);
 	medit.vScrollbar(true);
+
+	Button btn(&main, L"OK");
+	btn.position(116, 138);
+	btn.enhanced(true);
+	btn.flat(true);
 
 	Control::join();
 	return 0;

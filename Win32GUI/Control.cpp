@@ -421,8 +421,7 @@ Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, RECT re
     mHwnd = CreateWindow(type, text, style,
         rect.left, rect.top, rect.right, rect.bottom,
         parent ? parent->mHwnd : NULL, 
-        parent ? (HMENU)GetTickCount() : NULL, // Use ticks as id
-        instance, NULL);
+        0 /* No ID. No need */, instance, NULL);
     if (!mHwnd) 
     {
 #ifdef _DEBUG

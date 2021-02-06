@@ -1,6 +1,5 @@
 #pragma once
 #pragma warning (disable : 26495)
-#pragma warning (disable : 26812)
 
 #include "Control.h"
 
@@ -26,11 +25,11 @@ public:
 	// Appearance: Getters & Setters
 	////////////////////////////////////////////////////////////
 
-	Align textAlign();
+	DWORD textAlign();
 	bool textEllipsis();
 	bool simple();
 
-	void textAlign(Align);
+	void textAlign(DWORD);
 	void textEllipsis(bool);
 	void simple(bool);
 

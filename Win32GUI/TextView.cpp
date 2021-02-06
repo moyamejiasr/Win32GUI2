@@ -25,11 +25,11 @@ void TextView::autoSize()
 	size(s);
 }
 
-Align TextView::textAlign()
+DWORD TextView::textAlign()
 {
 	// Check that either 01b or 11b is set 
 	// since styles are 0, 1 and 2.
-	return (Align)(style.get() & 3);
+	return style.get() & 3;
 }
 
 bool TextView::textEllipsis()
@@ -44,10 +44,10 @@ bool TextView::simple()
 	return style.has(SS_SIMPLE);
 }
 
-void TextView::textAlign(Align type)
+void TextView::textAlign(DWORD type)
 {
-	style.subs(Align::Center);
-	style.subs(Align::Right);
+	// Remove both, center(1) and right(2)
+	style.subs(3);
 	style.add(type);
 }
 

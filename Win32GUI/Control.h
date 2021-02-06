@@ -37,13 +37,6 @@ typedef std::function<void(Control*, DWORD, POINT)> OnClickFunc;
 typedef std::function<void(Control*, DWORD, POINT)> OnDoubleClickFunc;
 typedef std::function<void(Control*, DWORD, POINT)> OnMouseWheelFunc;
 
-enum Align
-{
-	Left = SS_LEFT,
-	Center = SS_CENTER,
-	Right = SS_RIGHT
-};
-
 /*	Abstract class. It must not be implemented but inherited or 
 	casted to/from. It handles most of the common Win32 Windows 
 	functions. 

@@ -1,6 +1,5 @@
 #pragma once
 #pragma warning (disable : 26495)
-#pragma warning (disable : 26812)
 
 #include "Control.h"
 
@@ -26,12 +25,12 @@ public:
 	// Appearance: Getters & Setters
 	////////////////////////////////////////////////////////////
 
-	Align textAlign();
+	DWORD textAlign();
 	bool lowercase();
 	bool number();
 	bool uppercase();
 
-	void textAlign(Align);
+	void textAlign(DWORD);
 	void lowercase(bool);
 	void number(bool);
 	void uppercase(bool);
