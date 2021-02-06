@@ -8,18 +8,25 @@ class Button: public Control
 public:
 	Button(Control*, TSTRING, int = 75, int = 23);
 	Button(Control*, TSTRING, DWORD, RECT);
+	~Button();
 
-	DWORD textHAlign();
-	DWORD textVAlign();
+	Align textHAlign();
+	Align textVAlign();
 	bool flat();
 	bool multiline();
 	bool enhanced();
 
-	void textHAlign(DWORD);
-	void textVAlign(DWORD);
+	void textHAlign(Align);
+	void textVAlign(Align);
 	void flat(bool);
 	void multiline(bool);
 	void enhanced(bool);
+
+	HBITMAP bitmap();
+	HICON icon();
+
+	void bitmap(HBITMAP);
+	void icon(HICON);
 
 protected:
 	LRESULT onDraw(HDC hdc);

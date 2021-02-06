@@ -20,16 +20,17 @@ void TextView::autoSize()
 	HFONT font = (HFONT)SendMessage(mHwnd, WM_GETFONT, NULL, NULL);
 	HDC dc = GetDC(mHwnd);
 	SelectObject(dc, font);
-	GetTextExtentPoint(dc, str.c_str(), str.length(), &s);
+	GetTextExtentPoint(dc, str.c_str(), (int)str.length(), &s);
 	ReleaseDC(mHwnd, dc);
 	size(s);
 }
 
-DWORD TextView::textAlign()
+Align TextView::textAlign()
 {
-	// Check that either 01b or 11b is set 
-	// since styles are 0, 1 and 2.
-	return style.get() & 3;
+	DWORD s = style.get();
+	if (s & SS_CENTER) return Center;
+	if (s & SS_RIGHT) return Right;
+	return Left;
 }
 
 bool TextView::textEllipsis()
@@ -44,11 +45,19 @@ bool TextView::simple()
 	return style.has(SS_SIMPLE);
 }
 
-void TextView::textAlign(DWORD type)
+void TextView::textAlign(Align type)
 {
 	// Remove both, center(1) and right(2)
 	style.subs(3);
-	style.add(type);
+	switch (type) 
+	{
+	case Center:
+		style.add(SS_CENTER);
+		break;
+	case Right:
+		style.add(SS_RIGHT);
+		break;
+	}
 }
 
 void TextView::textEllipsis(bool state)

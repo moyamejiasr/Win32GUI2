@@ -152,16 +152,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="CommandLink.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="EditText.h" />
+    <ClInclude Include="ImageButton.h" />
     <ClInclude Include="MultiEditText.h" />
     <ClInclude Include="TextView.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="CommandLink.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="EditText.cpp" />
+    <ClCompile Include="ImageButton.cpp" />
     <ClCompile Include="MultiEditText.cpp" />
     <ClCompile Include="TextView.cpp" />
     <ClCompile Include="Window.cpp" />

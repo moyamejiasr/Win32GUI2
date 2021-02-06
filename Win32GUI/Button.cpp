@@ -9,18 +9,28 @@ Button::Button(Control* parent, TSTRING text, DWORD style, RECT rect)
 	: Control(parent, WC_BUTTON, text.c_str(), style, rect)
 {}
 
-DWORD Button::textHAlign()
+Button::~Button()
 {
-	// Returns all possibilities for align
-	// BS_LEFT | BS_CENTER | BS_RIGHT
-	return style.get() & BS_CENTER;
+	HICON i = icon();
+	if (i) DeleteObject(i);
+	HBITMAP b = bitmap();
+	if (b) DeleteObject(b);
 }
 
-DWORD Button::textVAlign()
+Align Button::textHAlign()
 {
-	// Returns all possibilities for align
-	// BS_YOP | BS_VCENTER | BS_BOTTOM
-	return style.get() & BS_VCENTER;
+	DWORD s = style.get();
+	if (s & BS_LEFT) return Left;
+	if (s & BS_RIGHT) return Right;
+	return Center; // Undefined and Center
+}
+
+Align Button::textVAlign()
+{
+	DWORD s = style.get();
+	if (s & BS_TOP) return Top;
+	if (s & BS_BOTTOM) return Bottom;
+	return Center; // Undefined and VCenter
 }
 
 bool Button::flat()
@@ -38,16 +48,32 @@ bool Button::enhanced()
 	return style.has(1);
 }
 
-void Button::textHAlign(DWORD type)
+void Button::textHAlign(Align type)
 {
 	style.subs(BS_CENTER);
-	style.add(type);
+	switch (type)
+	{
+	case Left:
+		style.add(BS_LEFT);
+		break;
+	case Right:
+		style.add(BS_RIGHT);
+		break;
+	}
 }
 
-void Button::textVAlign(DWORD type)
+void Button::textVAlign(Align type)
 {
 	style.subs(BS_VCENTER);
-	style.add(type);
+	switch (type)
+	{
+	case Top:
+		style.add(BS_TOP);
+		break;
+	case Bottom:
+		style.add(BS_BOTTOM);
+		break;
+	}
 }
 
 void Button::flat(bool state)
@@ -73,6 +99,30 @@ void Button::enhanced(bool state)
 		style.add(1);
 	else
 		style.subs(1);
+}
+
+HBITMAP Button::bitmap()
+{
+	return (HBITMAP)SendMessage(mHwnd, BM_GETIMAGE, IMAGE_BITMAP, NULL);
+}
+
+HICON Button::icon()
+{
+	return (HICON)SendMessage(mHwnd, BM_GETIMAGE, IMAGE_ICON, NULL);
+}
+
+void Button::bitmap(HBITMAP bitmap)
+{
+	HBITMAP old = (HBITMAP)SendMessage(mHwnd, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bitmap);
+	if (old != NULL)
+		DeleteObject(old);
+}
+
+void Button::icon(HICON icon)
+{
+	HICON old = (HICON)SendMessage(mHwnd, BM_SETIMAGE, IMAGE_ICON, (LPARAM)icon);
+	if (old != NULL)
+		DeleteObject(old);
 }
 
 LRESULT Button::onDraw(HDC hdc)

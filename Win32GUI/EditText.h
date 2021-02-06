@@ -25,12 +25,12 @@ public:
 	// Appearance: Getters & Setters
 	////////////////////////////////////////////////////////////
 
-	DWORD textAlign();
+	Align textAlign();
 	bool lowercase();
 	bool number();
 	bool uppercase();
 
-	void textAlign(DWORD);
+	void textAlign(Align);
 	void lowercase(bool);
 	void number(bool);
 	void uppercase(bool);

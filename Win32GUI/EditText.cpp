@@ -9,11 +9,12 @@ EditText::EditText(Control* parent, TSTRING text, DWORD style, RECT rect)
     : Control(parent, WC_EDIT, text.c_str(), style, rect)
 {}
 
-DWORD EditText::textAlign()
+Align EditText::textAlign()
 {
-    // Check that either 01b or 11b is set 
-    // since styles are 0, 1 and 2.
-    return style.get() & 3;
+    DWORD s = style.get();
+    if (s & ES_CENTER) return Center;
+    if (s & ES_RIGHT) return Right;
+    return Left;
 }
 
 bool EditText::lowercase()
@@ -31,11 +32,19 @@ bool EditText::uppercase()
     return style.has(ES_UPPERCASE);
 }
 
-void EditText::textAlign(DWORD type)
+void EditText::textAlign(Align type)
 {
     // Remove both, center(1) and right(2)
     style.subs(3);
-    style.add(type);
+    switch (type)
+    {
+    case Center:
+        style.add(ES_CENTER);
+        break;
+    case Right:
+        style.add(ES_RIGHT);
+        break;
+    }
 }
 
 void EditText::lowercase(bool state)

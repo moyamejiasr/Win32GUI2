@@ -6,7 +6,7 @@ MultiEditText::MultiEditText(Control* parent, TSTRING text, int width, int heigh
 {}
 
 MultiEditText::MultiEditText(Control* parent, TSTRING text, DWORD style, RECT rect)
-    : EditText(parent, text.c_str(), style, rect)
+    : EditText(parent, text, style, rect)
 {}
 
 void MultiEditText::heightInLines(LONG count)

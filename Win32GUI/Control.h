@@ -1,5 +1,6 @@
 #pragma once
 #pragma warning (disable : 26495)
+#pragma warning (disable : 26812)
 
 #pragma comment(linker, "\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -13,6 +14,10 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
+
+enum Align {
+	Undefined, Left, Center, Right, Top, Bottom
+};
 
 typedef std::basic_string<TCHAR> TSTRING;
 #ifdef UNICODE

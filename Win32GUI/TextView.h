@@ -25,11 +25,11 @@ public:
 	// Appearance: Getters & Setters
 	////////////////////////////////////////////////////////////
 
-	DWORD textAlign();
+	Align textAlign();
 	bool textEllipsis();
 	bool simple();
 
-	void textAlign(DWORD);
+	void textAlign(Align);
 	void textEllipsis(bool);
 	void simple(bool);
 
