@@ -7,6 +7,7 @@ class CommandLink: public Button
 {
 public:
 	CommandLink(Control*, TSTRING, int, int = 41); // 58 if two lines
+	CommandLink(Control*, TSTRING, RECT);
 	CommandLink(Control*, TSTRING, DWORD, RECT);
 
 	TSTRING note();

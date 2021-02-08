@@ -1,8 +1,11 @@
 #include "TextView.h"
 
 TextView::TextView(Control* parent, TSTRING text, int width, int height)
-	:TextView(parent, text, WS_CHILD | WS_VISIBLE,
-		{ 0, 0, width, height })
+	:TextView(parent, text, { 0, 0, width, height })
+{}
+
+TextView::TextView(Control* parent, TSTRING text, RECT rect)
+	: TextView(parent, text, WS_CHILD | WS_VISIBLE, rect)
 {}
 
 TextView::TextView(Control* parent, TSTRING text, DWORD style, RECT rect)

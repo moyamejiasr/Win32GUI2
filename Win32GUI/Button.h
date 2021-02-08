@@ -7,6 +7,7 @@ class Button: public Control
 {
 public:
 	Button(Control*, TSTRING, int = 75, int = 23);
+	Button(Control*, TSTRING, RECT);
 	Button(Control*, TSTRING, DWORD, RECT);
 	~Button();
 

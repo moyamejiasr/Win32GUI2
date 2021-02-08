@@ -7,6 +7,7 @@ class EditText : public Control
 {
 public:
 	EditText(Control*, TSTRING, int, int = 23);
+	EditText(Control*, TSTRING, RECT);
 	EditText(Control*, TSTRING, DWORD, RECT);
 
 	////////////////////////////////////////////////////////////

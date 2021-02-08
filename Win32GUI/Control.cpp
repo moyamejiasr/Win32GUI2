@@ -229,17 +229,17 @@ LONG Control::textSize()
 
 bool Control::textItalic()
 {
-    return mFont.lfItalic;
+    return (bool)mFont.lfItalic;
 }
 
 bool Control::textUnderline()
 {
-    return mFont.lfUnderline;
+    return (bool)mFont.lfUnderline;
 }
 
 bool Control::textStrikeOut()
 {
-    return mFont.lfStrikeOut;
+    return (bool)mFont.lfStrikeOut;
 }
 
 void Control::backColor(COLORREF color)
@@ -404,7 +404,7 @@ Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, RECT re
         mFont = parent->mFont;
         mFColor = parent->mFColor; mBColor = parent->mBColor;
     }
-    else 
+    else
     {
         // Use system parameters
         NONCLIENTMETRICS metrics{ sizeof(NONCLIENTMETRICS) };
@@ -416,9 +416,9 @@ Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, RECT re
     // Create window
     mHwnd = CreateWindow(type, text, style,
         rect.left, rect.top, rect.right, rect.bottom,
-        parent ? parent->mHwnd : NULL, 
+        parent ? parent->mHwnd : NULL,
         0 /* No ID. No need */, instance, NULL);
-    if (!mHwnd) 
+    if (!mHwnd)
     {
 #ifdef _DEBUG
         STDOUT << lastError() << std::endl;

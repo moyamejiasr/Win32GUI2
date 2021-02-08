@@ -6,7 +6,11 @@
 class ImageButton: public Button
 {
 public:
-	ImageButton(Control*, TSTRING, int = 75, int = 23);
-	ImageButton(Control*, TSTRING, DWORD, RECT);
+	ImageButton(Control*, HBITMAP, int = 75, int = 23);
+	ImageButton(Control*, HBITMAP, RECT);
+	ImageButton(Control*, HBITMAP, DWORD, RECT);
+	ImageButton(Control*, HICON, int = 75, int = 23);
+	ImageButton(Control*, HICON, RECT);
+	ImageButton(Control*, HICON, DWORD, RECT);
 };
 

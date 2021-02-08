@@ -1,8 +1,11 @@
 #include "Button.h"
 
 Button::Button(Control* parent, TSTRING text, int width, int height)
-	:Button(parent, text, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-		{ 0, 0, width, height })
+	:Button(parent, text, { 0, 0, width, height })
+{}
+
+Button::Button(Control* parent, TSTRING text, RECT rect)
+	: Button(parent, text, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, rect)
 {}
 
 Button::Button(Control* parent, TSTRING text, DWORD style, RECT rect)

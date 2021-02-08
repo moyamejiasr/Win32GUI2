@@ -1,8 +1,11 @@
 #include "Window.h"
 
 Window::Window(TSTRING text, LONG width, LONG height)
-    :Window(NULL, text, WS_OVERLAPPEDWINDOW,
-        { CW_USEDEFAULT, CW_USEDEFAULT, width, height })
+    :Window(text, { CW_USEDEFAULT, CW_USEDEFAULT, width, height })
+{}
+
+Window::Window(TSTRING text, RECT rect)
+	: Window(NULL, text, WS_OVERLAPPEDWINDOW, rect)
 {}
 
 Window::Window(Control* parent, TSTRING text, DWORD style, RECT rect)
@@ -304,7 +307,7 @@ void Window::onFocus(bool state)
 		mOnFocus(this, state);
 }
 
-void Window::onResize(POINT point)
+void Window::onResize(SIZE point)
 {
 	if (mOnResize)
 		mOnResize(this, point);
@@ -325,6 +328,7 @@ LRESULT Window::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
 		lpMMI->ptMinTrackSize = mMinSize;
 		lpMMI->ptMaxTrackSize = mMaxSize;
+		break;
 	}
 	case WM_SIZE:
 		onResize(LPARAM2POINT(lParam));

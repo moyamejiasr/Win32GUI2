@@ -6,13 +6,14 @@
 // Common callback definitions
 typedef std::function<bool(Window*)> OnCloseFunc;
 typedef std::function<void(Control*, bool)> OnFocusFunc;
-typedef std::function<void(Window*, POINT)> OnResizeFunc;
+typedef std::function<void(Window*, SIZE)> OnResizeFunc;
 typedef std::function<void(Window*, POINT)> OnMoveFunc;
 
 class Window: public Control
 {
 public:
 	Window(TSTRING, LONG = 320, LONG = 240);
+	Window(TSTRING, RECT);
 	Window(Control*, TSTRING, DWORD, RECT);
 
 	////////////////////////////////////////////////////////////
@@ -107,7 +108,7 @@ protected:
 	virtual LRESULT onDraw(HDC);
 	virtual bool onClose();
 	virtual void onFocus(bool);
-	virtual void onResize(POINT);
+	virtual void onResize(SIZE);
 	virtual void onMove(POINT);
 	virtual LRESULT procedure(UINT, WPARAM, LPARAM);
 };

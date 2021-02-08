@@ -1,8 +1,11 @@
 #include "CommandLink.h"
 
 CommandLink::CommandLink(Control* parent, TSTRING text, int width, int height)
-	:CommandLink(parent, text, WS_CHILD | WS_VISIBLE | BS_COMMANDLINK,
-		{ 0, 0, width, height })
+	:CommandLink(parent, text, { 0, 0, width, height })
+{}
+
+CommandLink::CommandLink(Control* parent, TSTRING text, RECT rect)
+	: CommandLink(parent, text, WS_CHILD | WS_VISIBLE | BS_COMMANDLINK, rect)
 {}
 
 CommandLink::CommandLink(Control* parent, TSTRING text, DWORD style, RECT rect)
