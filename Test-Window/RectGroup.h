@@ -3,9 +3,6 @@
 
 #define FONT_WIDTH 9
 
-// Father GroupBox
-const int RECT_X = 12,						RECT_Y = 12;
-const int RECT_W = 176,						RECT_H = FONT_WIDTH * 3 + 23 * 2 + 12;
 //	-	Child X label
 const int XLBL_X = FONT_WIDTH,				XLBL_Y = FONT_WIDTH * 2 + 5;
 const int XLBL_W = FONT_WIDTH * 4,			XLBL_H = 23;
@@ -33,10 +30,10 @@ const int HEDT_W = FONT_WIDTH * 4,			HEDT_H = YLBL_H;
 class RectGroup: GroupBox
 {
 public:
-	RectGroup(Window*, TSTRING, TSTRING[4]);
-	void onResize(Window*, SIZE;
-	void setUpper(LONG, LONG);
-	void setLower(LONG, LONG);
+	RectGroup(Window*, TSTRING, RECT, TSTRING[4]);
+	void onMove(Window*, POINT);
+	void onResize(Window*, SIZE);
+	void setRect(RECT);
 
 protected:
 	TextView xlbl; EditText xedt;

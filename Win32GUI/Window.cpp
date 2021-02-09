@@ -407,9 +407,6 @@ LRESULT Window::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (control) return control->onDraw((HDC)wParam);
 		break; // Not owned by us, continue with default.
 	}
-	case WM_KEYDOWN:
-		// TODO IMPLEMENT
-		break;
 	case WM_ERASEBKGND:
 		return onDraw((HDC)(wParam));
 	case WM_CLOSE:

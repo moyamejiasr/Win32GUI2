@@ -1,7 +1,7 @@
 #include "RectGroup.h"
 
-RectGroup::RectGroup(Window* wnd, TSTRING title, TSTRING names[4])
-	: GroupBox(wnd, title, { RECT_X, RECT_Y, RECT_W, RECT_H }),
+RectGroup::RectGroup(Window* wnd, TSTRING title, RECT rect, TSTRING names[4])
+	: GroupBox(wnd, title, rect),
 	xlbl(this, names[0], { XLBL_X, XLBL_Y, XLBL_W, XLBL_H }),
 	xedt(this, TEXT("0000"), { XEDT_X, XEDT_Y, XEDT_W, XEDT_H }),
 	ylbl(this, names[1], { YLBL_X, YLBL_Y, YLBL_W, YLBL_H }),
@@ -10,18 +10,24 @@ RectGroup::RectGroup(Window* wnd, TSTRING title, TSTRING names[4])
 	wedt(this, TEXT("0000"), { WEDT_X, WEDT_Y, WEDT_W, WEDT_H }),
 	hlbl(this, names[3], { HLBL_X, HLBL_Y, HLBL_W, HLBL_H }),
 	hedt(this, TEXT("0000"), { HEDT_X, HEDT_Y, HEDT_W, HEDT_H })
+{}
+
+void RectGroup::onMove(Window*, POINT p)
 {
-	wnd->setOnResize(std::bind(&onResize, this, std::placeholders::_1, std::placeholders::_2));
+	xedt.text(_IOTA(p.x));
+	yedt.text(_IOTA(p.y));
 }
 
-void RectGroup::setUpper(LONG x, LONG y)
+void RectGroup::onResize(Window*, SIZE s)
 {
-	xedt.text(_IOTA(x));
-	yedt.text(_IOTA(y));
+	wedt.text(_IOTA(s.cx));
+	hedt.text(_IOTA(s.cy));
 }
 
-void RectGroup::setLower(LONG cx, LONG cy)
+void RectGroup::setRect(RECT r)
 {
-	wedt.text(_IOTA(cx));
-	hedt.text(_IOTA(cy));
+	xedt.text(_IOTA(r.left));
+	yedt.text(_IOTA(r.top));
+	wedt.text(_IOTA(r.right));
+	hedt.text(_IOTA(r.bottom));
 }

@@ -28,9 +28,15 @@ typedef std::basic_string<TCHAR> TSTRING;
 #define _IOTA(X) std::to_string(X)
 #endif
 #define LPARAM2POINT(pm) { GET_X_LPARAM(pm), GET_Y_LPARAM(pm) }
+
 #define AsControl(hwnd) (Control*)GetWindowLongPtr(hwnd, GWLP_USERDATA)
 #define SetControl(hwnd, ptr) SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)ptr)
+
 #define UpdateStyle(hwnd) SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
+
+#define MemFunc1(i, m) std::bind(&m, i, std::placeholders::_1)
+#define MemFunc2(i, m) std::bind(&m, i, std::placeholders::_1, std::placeholders::_2)
+#define MemFunc3(i, m) std::bind(&m, i, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
 
 // Common callback definitions
 class Control;
