@@ -5,7 +5,7 @@ GroupBox::GroupBox(Control* parent, TSTRING text, int width, int height)
 {}
 
 GroupBox::GroupBox(Control* parent, TSTRING text, RECT rect)
-    : GroupBox(parent, text, WS_CHILD | WS_VISIBLE | BS_GROUPBOX, rect)
+    : GroupBox(parent, text, WS_CHILD | WS_VISIBLE | BS_GROUPBOX | BS_NOTIFY, rect)
 {}
 
 GroupBox::GroupBox(Control* parent, TSTRING text, DWORD style, RECT rect)

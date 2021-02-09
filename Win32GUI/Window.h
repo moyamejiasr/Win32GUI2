@@ -90,10 +90,18 @@ public:
 
 	void redrawMenu();
 	int newMessageBox(TSTRING, UINT = MB_ICONINFORMATION);
-	void setOnClose(OnCloseFunc);
-	void setOnFocus(OnFocusFunc);
-	void setOnResize(OnResizeFunc);
-	void setOnMove(OnMoveFunc);
+
+	template<class... _Types>
+	void setOnClose(_Types&&...);
+
+	template<class... _Types>
+	void setOnFocus(_Types&&...);
+
+	template<class... _Types>
+	void setOnResize(_Types&&...);
+
+	template<class... _Types>
+	void setOnMove(_Types&&...);
 
 protected:
 	OnCloseFunc mOnClose = NULL;
@@ -113,3 +121,30 @@ protected:
 	virtual LRESULT procedure(UINT, WPARAM, LPARAM);
 };
 
+template<class ..._Types>
+inline void Window::setOnClose(_Types&& ... args)
+{
+	mOnClose = std::bind(std::forward<_Types>(args)...,
+		std::placeholders::_1);
+}
+
+template<class ..._Types>
+inline void Window::setOnFocus(_Types&& ... args)
+{
+	mOnFocus = std::bind(std::forward<_Types>(args)...,
+		std::placeholders::_1, std::placeholders::_2);
+}
+
+template<class ..._Types>
+inline void Window::setOnResize(_Types&& ...args)
+{
+	mOnResize = std::bind(std::forward<_Types>(args)...,
+		std::placeholders::_1, std::placeholders::_2);
+}
+
+template<class ..._Types>
+inline void Window::setOnMove(_Types&& ...args)
+{
+	mOnMove = std::bind(std::forward<_Types>(args)..., 
+		std::placeholders::_1, std::placeholders::_2);
+}

@@ -5,6 +5,7 @@
 #include "MultiEditText.h"
 #include "Button.h"
 #include "GroupBox.h"
+#include "CheckBox.h"
 #include "ImageButton.h"
 #include "CommandLink.h"
 
