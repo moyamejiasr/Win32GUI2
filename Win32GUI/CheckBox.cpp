@@ -43,6 +43,11 @@ void CheckBox::uncheck()
     checked(false);
 }
 
+void CheckBox::setOnCheckedChange(OnCheckedChange func)
+{
+    mOnCheckedChange = func;
+}
+
 void CheckBox::onCheckedChange(bool state)
 {
     if (mOnCheckedChange)

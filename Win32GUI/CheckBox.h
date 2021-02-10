@@ -22,8 +22,7 @@ public:
 	void check();
 	void uncheck();
 
-	template<class... _Types>
-	void setOnCheckedChange(_Types&&...);
+	void setOnCheckedChange(OnCheckedChange);
 
 protected:
 	OnCheckedChange mOnCheckedChange = NULL;
@@ -31,10 +30,3 @@ protected:
 	virtual void onCheckedChange(bool);
 	LRESULT procedure(UINT, WPARAM, LPARAM);
 };
-
-template<class ..._Types>
-inline void CheckBox::setOnCheckedChange(_Types&& ... args)
-{
-	mOnCheckedChange = std::bind(std::forward<_Types>(args)...,
-		std::placeholders::_1, std::placeholders::_2);
-}

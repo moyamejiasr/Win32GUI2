@@ -262,6 +262,26 @@ int Window::newMessageBox(TSTRING text, UINT flags)
 	return MessageBox(mHwnd, text.c_str(), this->text().c_str(), flags);
 }
 
+void Window::setOnClose(OnCloseFunc func)
+{
+	mOnClose = func;
+}
+
+void Window::setOnFocus(OnFocusFunc func)
+{
+	mOnFocus = func;
+}
+
+void Window::setOnResize(OnResizeFunc func)
+{
+	mOnResize = func;
+}
+
+void Window::setOnMove(OnMoveFunc func)
+{
+	mOnMove = func;
+}
+
 LRESULT Window::onDraw(HDC hdc)
 {
 	if (mOnDraw)

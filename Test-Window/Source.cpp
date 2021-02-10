@@ -59,8 +59,9 @@ int main() {
 
 	// RECT
 	// Function members callback
-	window.setOnMove(&RectGroup::onMove, &rect);
-	window.setOnResize(&RectGroup::onResize, &rect);
+	using namespace std::placeholders;
+	window.setOnMove(std::bind(&RectGroup::onMove, &rect, _1, _2));
+	window.setOnResize(std::bind(&RectGroup::onResize, &rect, _1, _2));
 
 	// MIMA
 	mima.setRect(minMax);
