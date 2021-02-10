@@ -1,14 +1,18 @@
 #include "Button.h"
 
-Button::Button(Control* parent, TSTRING text, int width, int height)
+Button::Button(Control* parent, const TSTRING& text, int width, int height)
 	:Button(parent, text, { 0, 0, width, height })
 {}
 
-Button::Button(Control* parent, TSTRING text, RECT rect)
-	: Button(parent, text, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, rect)
+Button::Button(Control* parent, const TSTRING& text, RECT&& rect)
+	: Button(parent, text, rect)
 {}
 
-Button::Button(Control* parent, TSTRING text, DWORD style, RECT rect)
+Button::Button(Control* parent, const TSTRING& text, RECT& rect)
+	: Button(parent, text, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, &rect)
+{}
+
+Button::Button(Control* parent, const TSTRING& text, DWORD style, PRECT rect)
 	: Control(parent, WC_BUTTON, text.c_str(), style, rect)
 {}
 

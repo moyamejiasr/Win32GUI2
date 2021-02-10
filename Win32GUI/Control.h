@@ -27,16 +27,17 @@ typedef std::basic_string<TCHAR> TSTRING;
 #define STDOUT std::cout
 #define _IOTA(X) std::to_string(X)
 #endif
+#define XPixFromXDU(x, cxChar)       MulDiv(x, cxChar, 4)
+#define YPixFromYDU(y, cyChar)       MulDiv(y, cyChar, 8)
+#define XDUFromXPix(x, cxChar)       MulDiv(x, 4, cxChar)
+#define YDUFromYPix(y, cyChar)       MulDiv(y, 8, cyChar)
+
 #define LPARAM2POINT(pm) { GET_X_LPARAM(pm), GET_Y_LPARAM(pm) }
 
 #define AsControl(hwnd) (Control*)GetWindowLongPtr(hwnd, GWLP_USERDATA)
 #define SetControl(hwnd, ptr) SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)ptr)
 
 #define UpdateStyle(hwnd) SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
-
-#define MemFunc1(i, m) std::bind(&m, i, std::placeholders::_1)
-#define MemFunc2(i, m) std::bind(&m, i, std::placeholders::_1, std::placeholders::_2)
-#define MemFunc3(i, m) std::bind(&m, i, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
 
 // Common callback definitions
 class Control;
@@ -69,7 +70,8 @@ public:
 	// Window: Getters & Setters
 	////////////////////////////////////////////////////////////
 
-	/*	Returns the control DC.
+	/*	Returns the control DC. 
+		IMPORTANT: Must call ReleaseDC afterwards.
 		@return HDC
 	*/
 	HDC hdc();
@@ -118,7 +120,7 @@ public:
 	/*	Sets the parsed control Text/Title field.
 		@param TSTRING text
 	*/
-	void text(TSTRING);
+	void text(const TSTRING&);
 
 	////////////////////////////////////////////////////////////
 	// Rectangle: Getters & Setters
@@ -152,7 +154,7 @@ public:
 	/*	Sets the size of the Control with a struct.
 		@param SIZE (cx, cy)
 	*/
-	void size(SIZE);
+	void size(const SIZE&);
 	/*	Sets the position of the Control with two LONG params.
 		@param LONG x
 		@param LONG y
@@ -161,24 +163,27 @@ public:
 	/*	Sets the position of the Control with a struct.
 		@param POINT (x, y)
 	*/
-	void position(POINT);
+	void position(const POINT&);
 	/*	Sets the rectangle of the Control in a struct.
 		@param RECT (left, top, right, bottom)
 	*/
-	void rect(RECT);
+	void rect(const RECT&);
 	/*	Sets the rectangle of the Control in a struct. 
 		It differs from rect() in that it converts point 
-		units to screen pixels.
+		units to screen pixels. It also returns the new RECT.
 		@param RECT (left, top, right, bottom)
 	*/
-	void pointRect(RECT);
+	void pointRect(RECT&);
+	void pointRect(RECT&&);
 	/*	Sets the rectangle of the Control in a struct. 
 		It differs from the rect function in that it calculates 
 		the size of the normal rectangle needed to allocate a 
-		client rectangle of the given size.
+		client rectangle of the given size.  It also returns the 
+		new RECT.
 		@param RECT (left, top, right, bottom)
 	*/
-	void clientRect(RECT);
+	void clientRect(RECT&);
+	void clientRect(RECT&&);
 
 	////////////////////////////////////////////////////////////
 	// Appearance: Getters & Setters
@@ -276,7 +281,7 @@ public:
 		IMPORTANT not every Control uses this parameter.
 		@param TSTRING MUST BE length(32-1) MAX
 	*/
-	void textFont(TSTRING);
+	void textFont(const TSTRING&);
 	/*	Sets the size currently used in the control text. 
 		IMPORTANT not every Control uses this parameter.
 		@param LONG
@@ -369,7 +374,7 @@ public:
 	void setOnMouseWheel(OnMouseWheelFunc);
 
 	static ATOM initialize(HINSTANCE = GetModuleHandle(NULL));
-	static void join();
+	static BOOL join();
 	static TSTRING lastError();
 	static BOOL finalize();
 
@@ -379,6 +384,7 @@ protected:
 	static thread_local HINSTANCE instance;
 	static thread_local unsigned int wndCount;
 	HWND mHwnd;
+	SIZE sz;
 	COLORREF mBColor, mFColor;
 	LOGFONT mFont;
 	OnDrawFunc mOnDraw = NULL;
@@ -395,7 +401,7 @@ protected:
 		@param DWORD Style
 		@param RECT rectangle
 	*/
-	Control(Control*, PCTSTR, PCTSTR, DWORD, RECT);
+	Control(Control*, PCTSTR, PCTSTR, DWORD, const PRECT);
 	/*	Destroyed copy constructor. We do this to prevent full 
 		classes from being copied and then removed with a call 
 		to the default destructor.

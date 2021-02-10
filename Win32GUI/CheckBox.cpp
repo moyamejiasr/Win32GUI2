@@ -1,14 +1,18 @@
 #include "CheckBox.h"
 
-CheckBox::CheckBox(Control* parent, TSTRING text, int width, int height)
+CheckBox::CheckBox(Control* parent, const TSTRING& text, int width, int height)
     :CheckBox(parent, text, { 0, 0, width, height })
 {}
 
-CheckBox::CheckBox(Control* parent, TSTRING text, RECT rect)
-    : CheckBox(parent, text, WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX, rect)
+CheckBox::CheckBox(Control* parent, const TSTRING& text, RECT&& rect)
+    : CheckBox(parent, text, rect)
 {}
 
-CheckBox::CheckBox(Control* parent, TSTRING text, DWORD style, RECT rect)
+CheckBox::CheckBox(Control* parent, const TSTRING& text, RECT& rect)
+    : CheckBox(parent, text, WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX, &rect)
+{}
+
+CheckBox::CheckBox(Control* parent, const TSTRING& text, DWORD style, PRECT rect)
     : Control(parent, WC_BUTTON, text.c_str(), style, rect)
 {}
 

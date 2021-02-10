@@ -1,5 +1,4 @@
 #include "Control.h"
-#include "Control.h"
 
 thread_local ATOM Control::cName = initialize();
 thread_local HINSTANCE Control::instance = NULL;
@@ -43,7 +42,7 @@ TSTRING Control::text()
     return result;
 }
 
-void Control::text(TSTRING text)
+void Control::text(const TSTRING& text)
 {
     SetWindowText(mHwnd, text.c_str());
 }
@@ -151,7 +150,7 @@ void Control::size(LONG width, LONG height)
     size({ width, height });
 }
 
-void Control::size(SIZE p)
+void Control::size(const SIZE& p)
 {
     SetWindowPos(mHwnd, NULL, 0, 0, p.cx, p.cy, SWP_NOMOVE | SWP_NOZORDER);
 }
@@ -161,27 +160,40 @@ void Control::position(LONG width, LONG height)
     position({ width, height });
 }
 
-void Control::position(POINT p)
+void Control::position(const POINT& p)
 {
     SetWindowPos(mHwnd, NULL, p.x, p.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
-void Control::rect(RECT r)
+void Control::rect(const RECT& r)
 {
     SetWindowPos(mHwnd, NULL, r.left, r.top, r.right, r.bottom, SWP_NOZORDER);
 }
 
-void Control::pointRect(RECT r)
+void Control::pointRect(RECT& r)
 {
-    MapDialogRect(mHwnd, &r);
+    r.left = XPixFromXDU(r.left, sz.cx);
+    r.right = XPixFromXDU(r.right, sz.cx);
+    r.top = YPixFromYDU(r.top, sz.cy);
+    r.bottom = YPixFromYDU(r.bottom, sz.cy);
     rect(r);
 }
 
-void Control::clientRect(RECT r)
+void Control::pointRect(RECT&& r)
 {
-    AdjustWindowRectEx(&r, style.get(), 
+    pointRect(r);
+}
+
+void Control::clientRect(RECT& r)
+{
+    AdjustWindowRectEx(&r, style.get(),
         GetMenu(mHwnd) == NULL, exstyle.get());
     rect(r);
+}
+
+void Control::clientRect(RECT&& r)
+{
+    clientRect(r);
 }
 
 bool Control::enabled()
@@ -224,7 +236,10 @@ TSTRING Control::textFont()
 
 LONG Control::textSize()
 {
-    return mFont.lfHeight;
+    HDC hDC = hdc();
+    LONG s = MulDiv(-mFont.lfHeight, 72, GetDeviceCaps(hDC, LOGPIXELSY));
+    ReleaseDC(mHwnd, hDC);
+    return s;
 }
 
 bool Control::textItalic()
@@ -253,7 +268,7 @@ void Control::textColor(COLORREF color)
     redraw();
 }
 
-void Control::textFont(TSTRING str)
+void Control::textFont(const TSTRING& str)
 {
     size_t nLen = 32 > str.size() ? 31 : str.size();
     std::copy(str.begin(), str.end(), mFont.lfFaceName);
@@ -263,7 +278,9 @@ void Control::textFont(TSTRING str)
 
 void Control::textSize(LONG size)
 {
-    mFont.lfHeight = size;
+    HDC hDC = hdc();
+    mFont.lfHeight = -MulDiv(size, GetDeviceCaps(hDC, LOGPIXELSY), 72);
+    ReleaseDC(mHwnd, hDC);
     updateFont();
 }
 
@@ -310,10 +327,19 @@ void Control::hide()
 
 void Control::updateFont()
 {
+    // Update font
     HFONT pFont = (HFONT)SendMessage(mHwnd, WM_GETFONT, NULL, NULL);
     if (pFont != NULL) DeleteObject(pFont);
     HFONT nFont = CreateFontIndirect(&mFont);
     SendMessage(mHwnd, WM_SETFONT, (WPARAM)nFont, TRUE);
+
+    // Get Dialog Units
+    HDC dc = hdc(); SelectObject(dc, nFont);
+    GetTextExtentPoint32W(dc, L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 52, &sz);
+    ReleaseDC(mHwnd, dc);
+    sz.cx = (sz.cx / 26 + 1) / 2;
+
+    // Finally redraw everything
     redraw();
 }
 
@@ -367,14 +393,16 @@ ATOM Control::initialize(HINSTANCE instance)
     return cName = RegisterClass(&wndClass);
 }
 
-void Control::join()
+BOOL Control::join()
 {
     MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0) > 0)
+    BOOL result;
+    while ((result = GetMessage(&msg, NULL, 0, 0)) > 0)
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+    return result;
 }
 
 TSTRING Control::lastError()
@@ -395,7 +423,7 @@ BOOL Control::finalize()
     return UnregisterClass(MAKEINTATOM(cName), instance);
 }
 
-Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, RECT rect)
+Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, const PRECT rect)
 {
     // Setup text data
     if (parent)
@@ -414,8 +442,10 @@ Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, RECT re
     }
 
     // Create window
+    // According to the documentation, every coordinate
+    // set here is screen-based.
     mHwnd = CreateWindow(type, text, style,
-        rect.left, rect.top, rect.right, rect.bottom,
+        rect->left, rect->top, rect->right, rect->bottom,
         parent ? parent->mHwnd : NULL,
         0 /* No ID. No need */, instance, NULL);
     if (!mHwnd)

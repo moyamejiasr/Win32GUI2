@@ -10,7 +10,7 @@ Window::Window(TSTRING text, RECT rect)
 
 Window::Window(Control* parent, TSTRING text, DWORD style, RECT rect)
     :Control(parent, MAKEINTATOM(cName), text.c_str(),
-        parent ? style | WS_CHILD : style, rect)
+        parent ? style | WS_CHILD : style, &rect)
 {}
 
 POINT Window::minSize()

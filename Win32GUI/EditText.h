@@ -6,9 +6,10 @@
 class EditText : public Control
 {
 public:
-	EditText(Control*, TSTRING, int, int = 23);
-	EditText(Control*, TSTRING, RECT);
-	EditText(Control*, TSTRING, DWORD, RECT);
+	EditText(Control*, const TSTRING& text, int, int = 23);
+	EditText(Control*, const TSTRING&, RECT&&);
+	EditText(Control*, const TSTRING&, RECT&);
+	EditText(Control*, const TSTRING&, DWORD, PRECT);
 
 	////////////////////////////////////////////////////////////
 	// Window: Getters & Setters

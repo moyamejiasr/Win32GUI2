@@ -1,17 +1,21 @@
 #include "TextView.h"
 
-TextView::TextView(Control* parent, TSTRING text, int width, int height)
+TextView::TextView(Control* parent, const TSTRING& text, int width, int height)
 	:TextView(parent, text, { 0, 0, width, height })
 {}
 
-TextView::TextView(Control* parent, TSTRING text, RECT rect)
-	: TextView(parent, text, WS_CHILD | WS_VISIBLE, rect)
+TextView::TextView(Control * parent, const TSTRING & text, RECT && rect)
+	: TextView(parent, text, rect)
 {}
 
-TextView::TextView(Control* parent, TSTRING text, DWORD style, RECT rect)
+TextView::TextView(Control* parent, const TSTRING& text, RECT& rect)
+	: TextView(parent, text, WS_CHILD | WS_VISIBLE, &rect)
+{}
+
+TextView::TextView(Control* parent, const TSTRING& text, DWORD style, PRECT rect)
 	: Control(parent, WC_STATIC, text.c_str(), style, rect)
 {
-	if (rect.right == CW_USEDEFAULT) {
+	if (rect->right == CW_USEDEFAULT) {
 		autoSize();
 	}
 }
@@ -19,10 +23,9 @@ TextView::TextView(Control* parent, TSTRING text, DWORD style, RECT rect)
 void TextView::autoSize()
 {
 	SIZE s;
-	TSTRING str = text();
-	HFONT font = (HFONT)SendMessage(mHwnd, WM_GETFONT, NULL, NULL);
 	HDC dc = GetDC(mHwnd);
-	SelectObject(dc, font);
+	SelectObject(dc, (HFONT)SendMessage(mHwnd, WM_GETFONT, NULL, NULL));
+	TSTRING str = text();
 	GetTextExtentPoint(dc, str.c_str(), (int)str.length(), &s);
 	ReleaseDC(mHwnd, dc);
 	size(s);

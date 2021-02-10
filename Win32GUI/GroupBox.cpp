@@ -1,14 +1,18 @@
 #include "GroupBox.h"
 
-GroupBox::GroupBox(Control* parent, TSTRING text, int width, int height)
+GroupBox::GroupBox(Control* parent, const TSTRING& text, int width, int height)
     :GroupBox(parent, text, { 0, 0, width, height })
 {}
 
-GroupBox::GroupBox(Control* parent, TSTRING text, RECT rect)
-    : GroupBox(parent, text, WS_CHILD | WS_VISIBLE | BS_GROUPBOX | BS_NOTIFY, rect)
+GroupBox::GroupBox(Control* parent, const TSTRING& text, RECT&& rect)
+    : GroupBox(parent, text, rect)
 {}
 
-GroupBox::GroupBox(Control* parent, TSTRING text, DWORD style, RECT rect)
+GroupBox::GroupBox(Control* parent, const TSTRING& text, RECT& rect)
+    : GroupBox(parent, text, WS_CHILD | WS_VISIBLE | BS_GROUPBOX | BS_NOTIFY, &rect)
+{}
+
+GroupBox::GroupBox(Control* parent, const TSTRING& text, DWORD style, PRECT rect)
     : Control(parent, WC_BUTTON, text.c_str(), style, rect)
 {
     // Hacky-hack to make GroupBoxes actually notify

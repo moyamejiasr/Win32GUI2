@@ -6,9 +6,10 @@
 class TextView: public Control
 {
 public:
-	TextView(Control*, TSTRING, int = CW_USEDEFAULT, int = 13);
-	TextView(Control*, TSTRING, RECT);
-	TextView(Control*, TSTRING, DWORD, RECT);
+	TextView(Control*, const TSTRING&, int = CW_USEDEFAULT, int = 13);
+	TextView(Control*, const TSTRING&, RECT&&);
+	TextView(Control*, const TSTRING&, RECT&);
+	TextView(Control*, const TSTRING&, DWORD, PRECT);
 
 	////////////////////////////////////////////////////////////
 	// Window: Getters & Setters

@@ -9,9 +9,10 @@ typedef std::function<void(Control*, bool)> OnCheckedChange;
 class CheckBox : public Control
 {
 public:
-	CheckBox(Control*, TSTRING, int, int = 17);
-	CheckBox(Control*, TSTRING, RECT);
-	CheckBox(Control*, TSTRING, DWORD, RECT);
+	CheckBox(Control*, const TSTRING&, int, int = 17);
+	CheckBox(Control*, const TSTRING&, RECT&&);
+	CheckBox(Control*, const TSTRING&, RECT&);
+	CheckBox(Control*, const TSTRING&, DWORD, PRECT);
 
 	bool rightCheck();
 	bool checked();

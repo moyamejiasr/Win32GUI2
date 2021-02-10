@@ -1,15 +1,19 @@
 #include "EditText.h"
 
-EditText::EditText(Control* parent, TSTRING text, int width, int height)
+EditText::EditText(Control* parent, const TSTRING& text, int width, int height)
     :EditText(parent, text, { 0, 0, width, height })
 {}
 
-EditText::EditText(Control* parent, TSTRING text, RECT rect)
-    : EditText(parent, text, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 
-        rect)
+EditText::EditText(Control* parent, const TSTRING& text, RECT&& rect)
+    : EditText(parent, text, rect)
 {}
 
-EditText::EditText(Control* parent, TSTRING text, DWORD style, RECT rect)
+EditText::EditText(Control* parent, const TSTRING& text, RECT& rect)
+    : EditText(parent, text, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
+        &rect)
+{}
+
+EditText::EditText(Control* parent, const TSTRING& text, DWORD style, PRECT rect)
     : Control(parent, WC_EDIT, text.c_str(), style, rect)
 {
     // This hack allows us to preserve the white background
