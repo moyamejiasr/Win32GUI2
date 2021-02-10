@@ -4,7 +4,7 @@
 //
 // Main Window
 //
-RECT minMax = { 120, 80, 1920, 1080 };
+SIZE min = { 120, 80 }, max = { 1920, 1080 };
 Window window(TEXT("Test-Window"), 800, 600);
 
 //
@@ -54,8 +54,8 @@ int main() {
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	window.setOnClose([&](Window*)->bool {
 		return window.newMessageBox(L"Do you want to close?", MB_OKCANCEL) == 1; });
-	window.minSize(minMax.left, minMax.top);
-	window.maxSize(minMax.right, minMax.bottom);
+	window.minSize(min.cx, min.cy);
+	window.maxSize(max.cx, max.cy);
 
 	// RECT
 	// Function members callback
@@ -64,7 +64,7 @@ int main() {
 	window.setOnResize(std::bind(&RectGroup::onResize, &rect, _1, _2));
 
 	// MIMA
-	mima.setRect(minMax);
+	mima.setMinMax(min, max);
 
 	// Buttons
 	// Lambda callbacks

@@ -14,59 +14,52 @@ RectGroup::RectGroup(Window* wnd, TSTRING title, RECT rect, TSTRING names[4], bo
 	chec(this, TEXT("As client"), { CHEC_X, CHEC_Y, CHEC_W, CHEC_H })
 {
 	this->wnd = wnd;
+	using namespace std::placeholders;
 	if (enableCheck)
-	{
-		setb.setOnClick([&](Control*, DWORD, POINT)->void { 
-			RECT r{
-				std::stoi(xedt.text()),
-				std::stoi(yedt.text()),
-				std::stoi(wedt.text()) + r.left,
-				std::stoi(hedt.text()) + r.top,
-			};
-			if (chec.checked())
-			{
-				wnd->newMessageBox(L"Setting rect as client area");
-				wnd->clientRect(r);
-			}
-			else
-			{
-				wnd->newMessageBox(L"Setting rect as non-client area");
-				wnd->rect(r);
-			}
-			});
-	}
-	else
-	{
-		chec.enabled(false);
-		setb.setOnClick([&](Control*, DWORD, POINT)->void {
-			wnd->newMessageBox(L"Setting min/max properties");
-			wnd->minSize(std::stoi(xedt.text()), std::stoi(yedt.text()));
-			wnd->maxSize(std::stoi(wedt.text()), std::stoi(hedt.text()));
-			});
-	}
+		chec.setOnCheckedChange(std::bind(&RectGroup::onCheckedChange, this, _1, _2));
+	else chec.enabled(false);
+}
+
+RECT RectGroup::getRect()
+{
+	return {std::stoi(xedt.text()), std::stoi(yedt.text()),
+		std::stoi(wedt.text()), std::stoi(hedt.text())};
 }
 
 void RectGroup::onMove(Window*, POINT p)
 {
+	if (clientRect)
+		p = { 0, 0 }; // Client-rect starts at 0
 	xedt.text(_IOTA(p.x));
 	yedt.text(_IOTA(p.y));
 }
 
 void RectGroup::onResize(Window*, SIZE s)
 {
-	if (!chec.checked())
+	if (!clientRect)
 	{
 		RECT r = wnd->rect();
-		s.cx = r.right - r.left; s.cy = r.bottom - r.top;
+		s.cx = r.right; s.cy = r.bottom;
 	}
 	wedt.text(_IOTA(s.cx));
 	hedt.text(_IOTA(s.cy));
 }
 
-void RectGroup::setRect(RECT r)
+void RectGroup::onCheckedChange(Control*, bool state)
 {
-	xedt.text(_IOTA(r.left));
-	yedt.text(_IOTA(r.top));
-	wedt.text(_IOTA(r.right));
-	hedt.text(_IOTA(r.bottom));
+	RECT r = wnd->rect();
+	if (clientRect = state)
+	{
+		r = wnd->clientRect();
+	}
+	onMove(NULL, { r.left, r.top });
+	onResize(NULL, { r.right, r.bottom });
+}
+
+void RectGroup::setMinMax(SIZE m, SIZE M)
+{
+	xedt.text(_IOTA(m.cx));
+	yedt.text(_IOTA(m.cy));
+	wedt.text(_IOTA(M.cx));
+	hedt.text(_IOTA(M.cy));
 }

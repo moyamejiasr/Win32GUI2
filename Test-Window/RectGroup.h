@@ -41,11 +41,14 @@ class RectGroup: GroupBox
 {
 public:
 	RectGroup(Window*, TSTRING, RECT, TSTRING[4], bool);
+	RECT getRect();
 	void onMove(Window*, POINT);
 	void onResize(Window*, SIZE);
-	void setRect(RECT);
+	void onCheckedChange(Control*, bool);
+	void setMinMax(SIZE, SIZE);
 
 protected:
+	bool clientRect = false;
 	Window* wnd;
 	TextView xlbl; EditText xedt;
 	TextView ylbl; EditText yedt;

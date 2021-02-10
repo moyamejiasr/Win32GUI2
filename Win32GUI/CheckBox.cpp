@@ -5,7 +5,7 @@ CheckBox::CheckBox(Control* parent, TSTRING text, int width, int height)
 {}
 
 CheckBox::CheckBox(Control* parent, TSTRING text, RECT rect)
-    : CheckBox(parent, text, WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX | BS_NOTIFY, rect)
+    : CheckBox(parent, text, WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX, rect)
 {}
 
 CheckBox::CheckBox(Control* parent, TSTRING text, DWORD style, RECT rect)
