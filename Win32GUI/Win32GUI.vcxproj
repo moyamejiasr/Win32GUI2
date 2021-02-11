@@ -159,7 +159,6 @@
     <ClInclude Include="GroupBox.h" />
     <ClInclude Include="ImageButton.h" />
     <ClInclude Include="Manager.h" />
-    <ClInclude Include="MultiEditText.h" />
     <ClInclude Include="TextView.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
@@ -171,7 +170,6 @@
     <ClCompile Include="EditText.cpp" />
     <ClCompile Include="GroupBox.cpp" />
     <ClCompile Include="ImageButton.cpp" />
-    <ClCompile Include="MultiEditText.cpp" />
     <ClCompile Include="TextView.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>

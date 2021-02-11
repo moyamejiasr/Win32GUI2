@@ -53,4 +53,13 @@ protected:
 	virtual LRESULT procedure(UINT, WPARAM, LPARAM);
 };
 
+class MultiEditText : public EditText
+{
+public:
+	MultiEditText(Control*, const TSTRING&, int, int = 23);
+	MultiEditText(Control*, const TSTRING&, RECT&&);
+	MultiEditText(Control*, const TSTRING&, RECT&);
+	MultiEditText(Control*, const TSTRING&, DWORD, PRECT);
 
+	void heightInLines(LONG);
+};

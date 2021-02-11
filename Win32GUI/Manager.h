@@ -2,7 +2,6 @@
 #include "Window.h"
 #include "TextView.h"
 #include "EditText.h"
-#include "MultiEditText.h"
 #include "Button.h"
 #include "GroupBox.h"
 #include "CheckBox.h"
