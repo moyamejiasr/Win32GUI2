@@ -341,7 +341,7 @@ void Control::updateFont()
 
     // Get Dialog Units
     HDC dc = hdc(); SelectObject(dc, nFont);
-    GetTextExtentPoint32W(dc, L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 52, &mSzChar);
+    GetTextExtentPointW(dc, L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 52, &mSzChar);
     ReleaseDC(mHwnd, dc);
     mSzChar.cx = (mSzChar.cx / 26 + 1) / 2;
 

@@ -5,8 +5,6 @@
 #include "Button.h"
 #include "GroupBox.h"
 #include "CheckBox.h"
-#include "ImageButton.h"
-#include "CommandLink.h"
 
 #define Invisible (HBRUSH)GetStockObject(HOLLOW_BRUSH)
 #define Dialog(m, t) MessageBox(NULL, m, t, MB_ICONINFORMATION | MB_OK)

@@ -34,3 +34,28 @@ protected:
 	LRESULT procedure(UINT, WPARAM, LPARAM);
 };
 
+class ImageButton : public Button
+{
+public:
+	ImageButton(Control*, HBITMAP, int = 75, int = 23);
+	ImageButton(Control*, HBITMAP, RECT&&);
+	ImageButton(Control*, HBITMAP, RECT&);
+	ImageButton(Control*, HBITMAP, DWORD, PRECT);
+	ImageButton(Control*, HICON, int = 75, int = 23);
+	ImageButton(Control*, HICON, RECT&&);
+	ImageButton(Control*, HICON, RECT&);
+	ImageButton(Control*, HICON, DWORD, PRECT);
+};
+
+class CommandLink : public Button
+{
+public:
+	CommandLink(Control*, const TSTRING&, int, int = 41); // 58 if two lines
+	CommandLink(Control*, const TSTRING&, RECT&&);
+	CommandLink(Control*, const TSTRING&, RECT&);
+	CommandLink(Control*, const TSTRING&, DWORD, PRECT);
+
+	TSTRING note();
+
+	void note(TSTRING);
+};

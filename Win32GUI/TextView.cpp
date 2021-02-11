@@ -10,25 +10,41 @@ TextView::TextView(Control * parent, const TSTRING & text, RECT && rect)
 
 TextView::TextView(Control* parent, const TSTRING& text, RECT& rect)
 	: TextView(parent, text, WS_CHILD | WS_VISIBLE, &rect)
-{}
+{
+	autoSize(rect);
+}
 
 TextView::TextView(Control* parent, const TSTRING& text, DWORD style, PRECT rect)
 	: Control(parent, WC_STATIC, text.c_str(), style, rect)
-{
-	if (rect->right == CW_USEDEFAULT) {
-		autoSize();
-	}
-}
+{}
 
-void TextView::autoSize()
+void TextView::autoSize(RECT& r)
 {
-	SIZE s;
-	HDC dc = GetDC(mHwnd);
+	SIZE s; TSTRING str = text(); HDC dc = GetDC(mHwnd); 
 	SelectObject(dc, (HFONT)SendMessage(mHwnd, WM_GETFONT, NULL, NULL));
-	TSTRING str = text();
-	GetTextExtentPoint(dc, str.c_str(), (int)str.length(), &s);
+	GetTextExtentPoint(dc, str.c_str(), str.length(), &s); 
 	ReleaseDC(mHwnd, dc);
-	size(s);
+
+	// Apply calculated cx to right if default
+	if (r.right == CW_USEDEFAULT)
+		r.right = s.cx;
+	// Otherwise test for convert DPU
+	else if (r.right < 0) 
+		r.right = XPixFromXDU(-r.right, mSzChar.cx);
+
+	// Apply calculated cy to bottom if default
+	if (r.bottom == CW_USEDEFAULT)
+		r.bottom = s.cy;
+	// Otherwise test for convert DPU
+	else if (r.bottom < 0) 
+		r.bottom = YPixFromYDU(-r.bottom, mSzChar.cy);
+
+	// Convert DPU(-) to pixels for the rest
+	if (r.left < 0) r.left = XPixFromXDU(-r.left, mSzChar.cx);
+	if (r.top < 0) r.top = YPixFromYDU(-r.top, mSzChar.cy);
+
+	// Set rect
+	rect(r);
 }
 
 Align TextView::textAlign()
