@@ -373,14 +373,11 @@ public:
 	*/
 	void setOnMouseWheel(OnMouseWheelFunc);
 
-	static ATOM initialize(HINSTANCE = GetModuleHandle(NULL));
 	static BOOL join();
 	static TSTRING lastError();
-	static BOOL finalize();
 
 protected:
 	friend class Window;
-	static thread_local ATOM cName;
 	static thread_local HINSTANCE instance;
 	static thread_local unsigned int wndCount;
 	HWND mHwnd;
@@ -432,5 +429,4 @@ protected:
 		Called by: Window::WndProc
 	*/
 	virtual LRESULT procedure(UINT, WPARAM, LPARAM);
-	static LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 };

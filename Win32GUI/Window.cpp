@@ -1,5 +1,7 @@
 #include "Window.h"
 
+thread_local ATOM Window::cName = initialize();
+
 Window::Window(TSTRING text, LONG width, LONG height)
     :Window(text, { CW_USEDEFAULT, CW_USEDEFAULT, width, height })
 {}
@@ -318,49 +320,77 @@ void Window::onMove(POINT point)
 		mOnMove(this, point);
 }
 
-LRESULT Window::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
+ATOM Window::initialize()
 {
+	WNDCLASS wndClass{ CS_DBLCLKS, MainWndProc,
+		0, 0, instance = GetModuleHandle(NULL) };
+
+	// Use thread as name to prevent collisions
+	TSTRING name = _IOTA(GetCurrentThreadId());
+	wndClass.lpszClassName = name.c_str();
+	wndClass.hCursor = LoadCursor(0, IDC_ARROW);
+
+	// Return atom for usage
+	return RegisterClass(&wndClass);
+}
+
+LRESULT Window::MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	// Keep a list of active child windows to end
+	// the loop once all of them get destroyed.
+	switch (uMsg) {
+	case WM_CREATE: wndCount++; break;
+	case WM_DESTROY: wndCount--;
+		// Check if no more windows active
+		if (!wndCount) PostQuitMessage(0);
+		break;
+	}
+
+	// Will fail until ptr set in constructor
+	Window* it = (Window*)AsControl(hwnd);
+	if (!it) return DefWindowProc(hwnd, uMsg, wParam, lParam);
+
 	switch (uMsg)
 	{
 	case WM_GETMINMAXINFO:
 	{
 		LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
-		lpMMI->ptMinTrackSize = mMinSize;
-		lpMMI->ptMaxTrackSize = mMaxSize;
+		lpMMI->ptMinTrackSize = it->mMinSize;
+		lpMMI->ptMaxTrackSize = it->mMaxSize;
 		break;
 	}
 	case WM_SIZE:
-		onResize(LPARAM2POINT(lParam));
+		it->onResize(LPARAM2POINT(lParam));
 		break;
 	case WM_MOVE:
-		onMove(LPARAM2POINT(lParam));
+		it->onMove(LPARAM2POINT(lParam));
 		break;
 	case WM_NCHITTEST:
-		if (mDraggable)
+		if (it->mDraggable)
 		{
-			LRESULT hit = DefWindowProc(mHwnd, uMsg, wParam, lParam);
+			LRESULT hit = DefWindowProc(hwnd, uMsg, wParam, lParam);
 			if (GetAsyncKeyState(VK_LBUTTON) & VK_LBUTTON && hit == HTCLIENT)
 				return HTCAPTION;
 		}
 		break;
 	case WM_ACTIVATE:
 		// WA_INACTIVE value is 0
-		onFocus(LOWORD(wParam));
+		it->onFocus(LOWORD(wParam));
 		break;
 	case WM_SETCURSOR:
 	{
-		if (mPrevHover)
+		if (it->mPrevHover)
 		{
 			// Return if hovered control is the same
-			if (mPrevHover->mHwnd == (HWND)wParam)
+			if (it->mPrevHover->mHwnd == (HWND)wParam)
 				break;
 			// Exit hover if exists and changed
-			if (mPrevHover)
-				mPrevHover->onHover(false);
+			if (it->mPrevHover)
+				it->mPrevHover->onHover(false);
 		}
 		// Enter new one
-		mPrevHover = AsControl((HWND)wParam);
-		if (mPrevHover) mPrevHover->onHover(true);
+		it->mPrevHover = AsControl((HWND)wParam);
+		if (it->mPrevHover) it->mPrevHover->onHover(true);
 		break;
 	}
 	case WM_COMMAND:
@@ -376,8 +406,8 @@ LRESULT Window::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEWHEEL:
 		// All controls except Buttons trigger this message
 		// Do not send if control is disabled
-		if (mPrevHover && mPrevHover->enabled())
-			mPrevHover->onMouseWheel(GET_WHEEL_DELTA_WPARAM(wParam), LPARAM2POINT(lParam));
+		if (it->mPrevHover && it->mPrevHover->enabled())
+			it->mPrevHover->onMouseWheel(GET_WHEEL_DELTA_WPARAM(wParam), LPARAM2POINT(lParam));
 		return 0;
 	case WM_LBUTTONDBLCLK:
 	case WM_MBUTTONDBLCLK:
@@ -385,8 +415,8 @@ LRESULT Window::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_XBUTTONDBLCLK:
 		// All controls except Buttons trigger this message
 		// Do not send if control is disabled
-		if (mPrevHover && mPrevHover->enabled())
-			mPrevHover->onDoubleClick(uMsg, LPARAM2POINT(lParam));
+		if (it->mPrevHover && it->mPrevHover->enabled())
+			it->mPrevHover->onDoubleClick(uMsg, LPARAM2POINT(lParam));
 		return 0;
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
@@ -394,8 +424,8 @@ LRESULT Window::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_XBUTTONDOWN:
 		// All controls except Buttons trigger this message
 		// Do not send if control is disabled
-		if (mPrevHover && mPrevHover->enabled())
-			mPrevHover->onClick(uMsg, LPARAM2POINT(lParam));
+		if (it->mPrevHover && it->mPrevHover->enabled())
+			it->mPrevHover->onClick(uMsg, LPARAM2POINT(lParam));
 		return 0;
 	case WM_CTLCOLORBTN:
 	case WM_CTLCOLOREDIT:
@@ -407,10 +437,10 @@ LRESULT Window::procedure(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break; // Not owned by us, continue with default.
 	}
 	case WM_ERASEBKGND:
-		return onDraw((HDC)(wParam));
+		return it->onDraw((HDC)(wParam));
 	case WM_CLOSE:
-		if (onClose()) this->~Window();
+		if (it->onClose()) it->~Window();
 		return 0;
 	}
-	return DefWindowProc(mHwnd, uMsg, wParam, lParam);
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

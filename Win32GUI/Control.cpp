@@ -1,14 +1,20 @@
 #include "Control.h"
 
-thread_local ATOM Control::cName = initialize();
 thread_local HINSTANCE Control::instance = NULL;
 thread_local unsigned int Control::wndCount = 0;
 
 Control::~Control()
 {
     if (!mHwnd) return;
+
+    // Delete our own created objects
     HFONT pFont = (HFONT)SendMessage(mHwnd, WM_GETFONT, NULL, NULL);
     if (pFont != NULL) DeleteObject(pFont);
+
+    // Prevent msgs to control with already removed vtable.
+    SetControl(mHwnd, NULL);
+
+    // Finally destroy
     DestroyWindow(mHwnd);
     mHwnd = nullptr;
 }
@@ -381,18 +387,6 @@ void Control::setOnMouseWheel(OnMouseWheelFunc func)
     mOnMouseWheel = func;
 }
 
-ATOM Control::initialize(HINSTANCE instance)
-{
-    if (Control::instance) finalize();
-
-    WNDCLASS wndClass{ CS_DBLCLKS, MainWndProc,
-        0, 0, Control::instance = instance };
-    TSTRING class_name = _IOTA(GetCurrentThreadId());
-    wndClass.lpszClassName = class_name.c_str();
-    wndClass.hCursor = LoadCursor(0, IDC_ARROW);
-    return cName = RegisterClass(&wndClass);
-}
-
 BOOL Control::join()
 {
     MSG msg;
@@ -416,11 +410,6 @@ TSTRING Control::lastError()
     TSTRING result(buffer, size);
     LocalFree(buffer);
     return result;
-}
-
-BOOL Control::finalize()
-{
-    return UnregisterClass(MAKEINTATOM(cName), instance);
 }
 
 Control::Control(Control* parent, PCTSTR type, PCTSTR text, DWORD style, const PRECT rect)
@@ -524,24 +513,4 @@ void Control::Style::add(DWORD f)
 void Control::Style::subs(DWORD f)
 {
     SetWindowLongPtr(mOuter->mHwnd, mType, get() & ~f);
-}
-
-LRESULT CALLBACK Control::MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    // Keep a list of active child windows to end 
-    // the loop once all of them get destroyed.
-    switch (uMsg) {
-    case WM_CREATE:
-        wndCount++;
-        break;
-    case WM_DESTROY:
-        wndCount--;
-        // Check if no more windows active
-        if (!wndCount)
-            PostQuitMessage(0);
-        break;
-    }
-    Control* control = AsControl(hwnd); // Will fail until ptr set in constructor
-    if (control) return control->procedure(uMsg, wParam, lParam);
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

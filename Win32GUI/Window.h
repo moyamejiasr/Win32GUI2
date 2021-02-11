@@ -97,6 +97,7 @@ public:
 	void setOnMove(OnMoveFunc);
 
 protected:
+	static thread_local ATOM cName;
 	OnCloseFunc mOnClose = NULL;
 	OnFocusFunc mOnFocus = NULL;
 	OnResizeFunc mOnResize = NULL;
@@ -111,5 +112,6 @@ protected:
 	virtual void onFocus(bool);
 	virtual void onResize(SIZE);
 	virtual void onMove(POINT);
-	virtual LRESULT procedure(UINT, WPARAM, LPARAM);
+	static ATOM initialize();
+	static LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 };
