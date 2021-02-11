@@ -1,7 +1,7 @@
 #include "Control.h"
 
+thread_local int Control::wndCount = 0;
 thread_local HINSTANCE Control::instance = NULL;
-thread_local unsigned int Control::wndCount = 0;
 
 Control::~Control()
 {
@@ -56,7 +56,7 @@ void Control::text(const TSTRING& text)
 SIZE Control::size()
 {
     RECT it = rect();
-    return { it.right - it.left, it.bottom - it.top };
+    return { it.right, it.bottom };
 }
 
 POINT Control::position()
@@ -69,6 +69,7 @@ RECT Control::rect()
 {
     RECT rect;
     GetWindowRect(mHwnd, &rect);
+    rect.right -= rect.left, rect.bottom -= rect.top;
     return rect;
 }
 

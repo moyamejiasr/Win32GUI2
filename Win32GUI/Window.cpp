@@ -2,18 +2,26 @@
 
 thread_local ATOM Window::cName = initialize();
 
-Window::Window(TSTRING text, LONG width, LONG height)
+Window::Window(const TSTRING& text, LONG width, LONG height)
     :Window(text, { CW_USEDEFAULT, CW_USEDEFAULT, width, height })
 {}
 
-Window::Window(TSTRING text, RECT rect)
-	: Window(NULL, text, WS_OVERLAPPEDWINDOW, rect)
+Window::Window(const TSTRING& text, RECT&& rect)
+	: Window(text, rect)
 {}
 
-Window::Window(Control* parent, TSTRING text, DWORD style, RECT rect)
-    :Control(parent, MAKEINTATOM(cName), text.c_str(),
-        parent ? style | WS_CHILD : style, &rect)
+Window::Window(const TSTRING& text, RECT& rect)
+	: Window(NULL, text, WS_OVERLAPPEDWINDOW, &rect)
 {}
+
+Window::Window(Control* parent, const TSTRING& text, DWORD style, PRECT rect)
+    :Control(parent, MAKEINTATOM(cName), text.c_str(),
+        parent ? style | WS_CHILD : style, rect)
+{
+	// Return the rect back since it may have
+	// changed because of the CW_USEDEFAULT.
+	*rect = this->rect();
+}
 
 POINT Window::minSize()
 {

@@ -378,8 +378,8 @@ public:
 
 protected:
 	friend class Window;
+	static thread_local int wndCount;
 	static thread_local HINSTANCE instance;
-	static thread_local unsigned int wndCount;
 	HWND mHwnd;
 	SIZE mSzChar;
 	COLORREF mBColor, mFColor;

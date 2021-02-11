@@ -12,9 +12,10 @@ typedef std::function<void(Window*, POINT)> OnMoveFunc;
 class Window: public Control
 {
 public:
-	Window(TSTRING, LONG = 320, LONG = 240);
-	Window(TSTRING, RECT);
-	Window(Control*, TSTRING, DWORD, RECT);
+	Window(const TSTRING&, LONG = 320, LONG = 240);
+	Window(const TSTRING&, RECT&&);
+	Window(const TSTRING&, RECT&);
+	Window(Control*, const TSTRING&, DWORD, PRECT);
 
 	////////////////////////////////////////////////////////////
 	// Window: Getters & Setters
