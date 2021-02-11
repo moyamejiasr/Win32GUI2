@@ -11,6 +11,8 @@ public:
 	GroupBox(Control*, const TSTRING&, RECT&);
 	GroupBox(Control*, const TSTRING&, DWORD, PRECT);
 
+	RECT clientRect();
+
 protected:
 	static LRESULT CALLBACK GroupSubClass(HWND, UINT, WPARAM, LPARAM, UINT_PTR, DWORD_PTR);
 };

@@ -172,10 +172,10 @@ void Control::rect(const RECT& r)
 
 void Control::pointRect(RECT& r)
 {
-    r.left = XPixFromXDU(r.left, sz.cx);
-    r.right = XPixFromXDU(r.right, sz.cx);
-    r.top = YPixFromYDU(r.top, sz.cy);
-    r.bottom = YPixFromYDU(r.bottom, sz.cy);
+    r.left = XPixFromXDU(r.left, mSzChar.cx);
+    r.right = XPixFromXDU(r.right, mSzChar.cx);
+    r.top = YPixFromYDU(r.top, mSzChar.cy);
+    r.bottom = YPixFromYDU(r.bottom, mSzChar.cy);
     rect(r);
 }
 
@@ -335,9 +335,9 @@ void Control::updateFont()
 
     // Get Dialog Units
     HDC dc = hdc(); SelectObject(dc, nFont);
-    GetTextExtentPoint32W(dc, L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 52, &sz);
+    GetTextExtentPoint32W(dc, L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 52, &mSzChar);
     ReleaseDC(mHwnd, dc);
-    sz.cx = (sz.cx / 26 + 1) / 2;
+    mSzChar.cx = (mSzChar.cx / 26 + 1) / 2;
 
     // Finally redraw everything
     redraw();

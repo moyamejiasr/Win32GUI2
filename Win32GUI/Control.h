@@ -384,7 +384,7 @@ protected:
 	static thread_local HINSTANCE instance;
 	static thread_local unsigned int wndCount;
 	HWND mHwnd;
-	SIZE sz;
+	SIZE mSzChar;
 	COLORREF mBColor, mFColor;
 	LOGFONT mFont;
 	OnDrawFunc mOnDraw = NULL;

@@ -4,11 +4,13 @@
 int main() {
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	Window window(L"Test-Window");
-	// TODO when only right apply jump-line
-	RECT r{0, 0, CW_USEDEFAULT, CW_USEDEFAULT};
-	TextView text(&window, L"Hello world", r);
-	RECT ri{ 7, 7, 50, 14 };
-	text.pointRect(ri);
+	window.textSize(12);
+
+	GroupBox box(&window, L"Test", {12, 12, 280, 162});
+
+	TextView text(&box, L"Some TEXT", box.clientRect());
+	text.border(true);
+
 	window.show();
 	return Control::join();
 }
